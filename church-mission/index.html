@@ -1,0 +1,685 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>인천제2교회 세계선교</title>
+<meta name="description" content="인천제2교회가 파송하고 협력하는 세계 선교 현황 — 인천에서 땅끝까지." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --night: #0a1222;
+    --night-2: #101c33;
+    --land: #1c2b47;
+    --land-edge: #2a3d5f;
+    --land-active: #2c4a78;
+    --sent: #f4c25b;
+    --partner: #62d6c6;
+    --home: #ff8a7a;
+    --ink-on-dark: #eef2f8;
+    --muted-on-dark: #9fb0c9;
+
+    --bg: #f8f5ef;
+    --surface: #ffffff;
+    --ink: #1a2233;
+    --muted: #5f6b80;
+    --line: #e6e0d4;
+    --sent-ink: #a8750f;
+    --partner-ink: #13857a;
+    --radius: 16px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0e1626;
+      --surface: #152036;
+      --ink: #e9eef6;
+      --muted: #9aa8bf;
+      --line: #24324d;
+      --sent-ink: #f4c25b;
+      --partner-ink: #62d6c6;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e1626;
+    --surface: #152036;
+    --ink: #e9eef6;
+    --muted: #9aa8bf;
+    --line: #24324d;
+    --sent-ink: #f4c25b;
+    --partner-ink: #62d6c6;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Noto Sans KR", system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    word-break: keep-all;
+  }
+  a { color: inherit; }
+
+  /* ───────── Header ───────── */
+  .site-header {
+    position: absolute; inset: 0 0 auto 0; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px clamp(16px, 4vw, 48px);
+    color: var(--ink-on-dark);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; letter-spacing: -0.01em; }
+  .brand-mark {
+    width: 30px; height: 30px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18);
+  }
+  .site-nav { display: flex; gap: clamp(12px, 2.4vw, 28px); font-size: 14px; }
+  .site-nav a { text-decoration: none; color: var(--muted-on-dark); transition: color .2s; }
+  .site-nav a:hover { color: #fff; }
+
+  /* ───────── Hero ───────── */
+  .hero {
+    position: relative; overflow: hidden;
+    background:
+      radial-gradient(1200px 600px at 72% 35%, rgba(70,110,180,0.22), transparent 60%),
+      radial-gradient(900px 500px at 15% 90%, rgba(98,214,198,0.08), transparent 60%),
+      linear-gradient(180deg, var(--night) 0%, var(--night-2) 100%);
+    color: var(--ink-on-dark);
+    padding: 96px 0 40px;
+  }
+  .hero-copy { text-align: center; padding: 0 16px; position: relative; z-index: 2; }
+  .verse {
+    margin: 0 0 14px; font-family: "Noto Serif KR", serif; font-size: clamp(13px, 1.6vw, 16px);
+    color: var(--muted-on-dark); letter-spacing: 0.02em;
+    opacity: 0; transform: translateY(8px); animation: rise .9s .2s ease-out forwards;
+  }
+  .hero h1 {
+    margin: 0; font-family: "Noto Serif KR", serif; font-weight: 900;
+    font-size: clamp(30px, 5.6vw, 64px); line-height: 1.15; letter-spacing: -0.02em;
+    opacity: 0; transform: translateY(10px); animation: rise 1s .4s ease-out forwards;
+  }
+  .hero h1 em { font-style: normal; color: var(--sent); }
+  .hero-sub {
+    margin: 14px auto 0; max-width: 560px; color: var(--muted-on-dark); font-size: clamp(14px, 1.7vw, 17px);
+    opacity: 0; animation: rise 1s .6s ease-out forwards;
+  }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+
+  .map-wrap { position: relative; max-width: 1280px; margin: 8px auto 0; padding: 0 8px; }
+  #world { display: block; width: 100%; height: auto; overflow: visible; }
+
+  .sphere { fill: rgba(255,255,255,0.015); stroke: rgba(255,255,255,0.06); }
+  .graticule { fill: none; stroke: rgba(255,255,255,0.05); stroke-width: .5; }
+  .country { fill: var(--land); stroke: var(--land-edge); stroke-width: .4; transition: fill .6s; }
+  .country.is-mission { fill: var(--land-active); }
+  .country.is-home { fill: #4a3a52; }
+
+  .arc { fill: none; stroke-width: 1.6; stroke-linecap: round; }
+  .arc.sent { stroke: var(--sent); }
+  .arc.partner { stroke: var(--partner); stroke-width: 1.2; }
+  .arc-glow { fill: none; stroke-width: 5; opacity: .18; filter: url(#blur); }
+  .arc-glow.sent { stroke: var(--sent); }
+  .arc-glow.partner { stroke: var(--partner); }
+  .arc.dim, .arc-glow.dim { opacity: .12 !important; transition: opacity .3s; }
+  .arc.hot { stroke-width: 2.6; }
+
+  .comet { filter: url(#glow); }
+  .comet.sent { fill: #fff3d1; }
+  .comet.partner { fill: #d9fff9; }
+
+  .marker { cursor: pointer; }
+  .marker .ring { fill: none; stroke-width: 1.2; opacity: 0; }
+  .marker .dot { stroke: var(--night); stroke-width: 1.2; }
+  .marker.sent .dot { fill: var(--sent); }
+  .marker.partner .dot { fill: var(--partner); }
+  .marker.sent .ring { stroke: var(--sent); }
+  .marker.partner .ring { stroke: var(--partner); }
+  .marker.live .ring { animation: ping 2.8s ease-out infinite; }
+  @keyframes ping {
+    0% { r: 3; opacity: .9; }
+    80%, 100% { r: 16; opacity: 0; }
+  }
+  .marker .hit { fill: transparent; }
+
+  .label { font-size: 11px; fill: var(--ink-on-dark); paint-order: stroke; stroke: var(--night); stroke-width: 3px; stroke-linejoin: round; pointer-events: none; opacity: 0; }
+  .label .count { fill: var(--muted-on-dark); font-size: 9.5px; }
+
+  .home .core { fill: var(--home); filter: url(#glow); }
+  .home .halo { fill: none; stroke: var(--home); stroke-width: 1; animation: ping 2.2s ease-out infinite; }
+  .home-label { font-size: 12px; font-weight: 700; fill: #fff; paint-order: stroke; stroke: var(--night); stroke-width: 3.5px; stroke-linejoin: round; }
+
+  .shock { fill: none; stroke: rgba(255,255,255,0.35); stroke-width: 1; }
+
+  /* overlay UI on map */
+  .legend {
+    position: absolute; left: clamp(16px, 3vw, 40px); bottom: 8px;
+    display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; color: var(--muted-on-dark);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .legend i { width: 18px; height: 2px; border-radius: 2px; display: inline-block; }
+  .legend .l-sent i { background: var(--sent); box-shadow: 0 0 8px var(--sent); }
+  .legend .l-partner i { background: var(--partner); box-shadow: 0 0 8px var(--partner); }
+
+  .replay {
+    position: absolute; right: clamp(16px, 3vw, 40px); bottom: 4px;
+    border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); color: var(--ink-on-dark);
+    font: inherit; font-size: 13px; padding: 7px 14px; border-radius: 999px; cursor: pointer;
+    transition: background .2s;
+  }
+  .replay:hover { background: rgba(255,255,255,0.14); }
+
+  .secure-card {
+    position: absolute; left: clamp(16px, 3vw, 40px); top: 38%;
+    max-width: 230px; padding: 14px 16px; border-radius: 14px;
+    background: rgba(10,18,34,0.72); border: 1px dashed rgba(255,255,255,0.22);
+    backdrop-filter: blur(6px); font-size: 13px; color: var(--muted-on-dark);
+    opacity: 0; transform: translateY(8px); transition: opacity .8s, transform .8s;
+  }
+  .secure-card.show { opacity: 1; transform: none; }
+  .secure-card strong { display: flex; align-items: center; gap: 6px; color: var(--ink-on-dark); font-size: 14px; margin-bottom: 4px; }
+  .secure-card ul { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; }
+  .secure-card li { display: flex; justify-content: space-between; gap: 12px; }
+  .secure-card li b { color: var(--ink-on-dark); font-weight: 500; }
+
+  .tooltip {
+    position: absolute; z-index: 5; pointer-events: none;
+    min-width: 160px; padding: 12px 14px; border-radius: 12px;
+    background: rgba(8,14,28,0.94); border: 1px solid rgba(255,255,255,0.14);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+    color: var(--ink-on-dark); font-size: 13px;
+    opacity: 0; transform: translate(-50%, calc(-100% - 14px)); transition: opacity .15s;
+  }
+  .tooltip.show { opacity: 1; }
+  .tooltip h4 { margin: 0 0 6px; font-size: 15px; }
+  .tooltip ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+  .tooltip li { display: flex; align-items: center; gap: 8px; }
+
+  .tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 999px; line-height: 1.6; }
+  .tag.sent { background: rgba(244,194,91,0.16); color: var(--sent); }
+  .tag.partner { background: rgba(98,214,198,0.16); color: var(--partner); }
+
+  /* ───────── Stats ───────── */
+  .stats {
+    max-width: 1080px; margin: -1px auto 0; padding: 40px 16px 8px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  }
+  .stat { text-align: center; padding: 18px 8px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); }
+  .stat b { display: block; font-family: "Noto Serif KR", serif; font-size: clamp(28px, 4vw, 40px); line-height: 1.1; }
+  .stat span { color: var(--muted); font-size: 14px; }
+  .stat.sent b { color: var(--sent-ink); }
+  .stat.partner b { color: var(--partner-ink); }
+
+  /* ───────── Missionaries ───────── */
+  section.block { max-width: 1080px; margin: 0 auto; padding: 64px 16px 16px; }
+  .block-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; }
+  .block-head h2 { margin: 0; font-family: "Noto Serif KR", serif; font-size: clamp(24px, 3.2vw, 34px); letter-spacing: -0.02em; }
+  .block-head p { margin: 4px 0 0; color: var(--muted); }
+
+  .filters { display: flex; gap: 6px; padding: 4px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
+  .filters button {
+    border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 14px;
+    padding: 6px 14px; border-radius: 999px; cursor: pointer;
+  }
+  .filters button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 18px; cursor: pointer; transition: transform .2s, box-shadow .2s, border-color .2s;
+  }
+  .card:hover, .card:focus-visible { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(20,30,50,0.08); border-color: var(--muted); outline: none; }
+  .card h3 { margin: 0 0 10px; font-size: 18px; display: flex; align-items: center; justify-content: space-between; }
+  .card h3 small { font-size: 13px; font-weight: 400; color: var(--muted); }
+  .card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .card li { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 15px; }
+  .card .tag.sent { color: var(--sent-ink); }
+  .card .tag.partner { color: var(--partner-ink); }
+  .card.secure { border-style: dashed; cursor: default; }
+  .card.secure h3::before { content: "🔒"; font-size: 14px; margin-right: 6px; }
+  .card.secure h3 small { margin-left: auto; }
+  .card[hidden] { display: none; }
+
+  /* ───────── Prayer ───────── */
+  .prayer {
+    margin-top: 48px; padding: 72px 16px; text-align: center;
+    background: linear-gradient(180deg, var(--night-2), var(--night)); color: var(--ink-on-dark);
+  }
+  .prayer blockquote { margin: 0 auto; max-width: 720px; font-family: "Noto Serif KR", serif; font-size: clamp(18px, 2.4vw, 24px); line-height: 1.7; }
+  .prayer cite { display: block; margin-top: 12px; font-style: normal; color: var(--muted-on-dark); font-size: 14px; }
+  .prayer .cta { display: inline-block; margin-top: 28px; padding: 12px 22px; border-radius: 999px; background: var(--sent); color: #1a1406; font-weight: 700; text-decoration: none; }
+
+  footer { padding: 28px 16px 40px; text-align: center; color: var(--muted); font-size: 13px; }
+
+  @media (max-width: 760px) {
+    .site-nav { display: none; }
+    .hero { padding-top: 84px; }
+    .label { display: none; }
+    .secure-card { position: static; margin: 16px 16px 0; max-width: none; }
+    .legend, .replay { position: static; }
+    .map-meta { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px 0; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="#top">
+    <span class="brand-mark" aria-hidden="true">
+      <svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M7 0v16M1.5 5h11" stroke="#f4c25b" stroke-width="2" stroke-linecap="round"/></svg>
+    </span>
+    인천제2교회 세계선교
+  </a>
+  <nav class="site-nav" aria-label="주 메뉴">
+    <a href="#map">선교지도</a>
+    <a href="#missionaries">선교사</a>
+    <a href="#prayer">함께 기도하기</a>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="hero" id="map" aria-label="세계 선교 지도">
+    <div class="hero-copy">
+      <p class="verse">“땅 끝까지 이르러 내 증인이 되리라” — 사도행전 1:8</p>
+      <h1>인천에서, <em>땅 끝</em>까지</h1>
+      <p class="hero-sub">인천제2교회가 파송하고 협력하는 선교사님들이 열방에서 복음의 길을 내고 있습니다.</p>
+    </div>
+
+    <div class="map-wrap">
+      <svg id="world" role="img" aria-label="대한민국 인천에서 세계 각국 선교지로 이어지는 선교 지도"></svg>
+      <aside class="secure-card" id="secureCard" aria-label="보안 지역 사역">
+        <strong>🔒 보안 지역 사역</strong>
+        선교사님의 안전을 위해 위치를 지도에 표시하지 않습니다.
+        <ul id="secureList"></ul>
+      </aside>
+      <div class="map-meta">
+        <div class="legend">
+          <span class="l-sent"><i></i>파송 선교사</span>
+          <span class="l-partner"><i></i>협력 선교사</span>
+        </div>
+        <button class="replay" id="replay" type="button">↻ 다시 보기</button>
+      </div>
+      <div class="tooltip" id="tooltip" role="status"></div>
+    </div>
+  </section>
+
+  <div class="stats" aria-label="선교 현황">
+    <div class="stat"><b data-count="total">0</b><span>선교사</span></div>
+    <div class="stat sent"><b data-count="sent">0</b><span>파송</span></div>
+    <div class="stat partner"><b data-count="partner">0</b><span>협력</span></div>
+    <div class="stat"><b data-count="fields">0</b><span>선교지</span></div>
+  </div>
+
+  <section class="block" id="missionaries">
+    <div class="block-head">
+      <div>
+        <h2>우리가 함께하는 선교사님</h2>
+        <p>카드를 누르면 지도에서 해당 선교지를 보여드립니다.</p>
+      </div>
+      <div class="filters" role="group" aria-label="선교사 구분">
+        <button type="button" data-filter="all" aria-pressed="true">전체</button>
+        <button type="button" data-filter="sent" aria-pressed="false">파송</button>
+        <button type="button" data-filter="partner" aria-pressed="false">협력</button>
+      </div>
+    </div>
+    <div class="grid" id="cards"></div>
+  </section>
+
+  <section class="prayer" id="prayer">
+    <blockquote>
+      “그러므로 너희는 가서 모든 민족을 제자로 삼아<br />아버지와 아들과 성령의 이름으로 세례를 베풀고”
+      <cite>마태복음 28:19</cite>
+    </blockquote>
+    <a class="cta" href="#missionaries">선교사님을 위해 기도하기</a>
+  </section>
+</main>
+
+<footer>© 인천제2교회 선교위원회</footer>
+
+<script src="vendor/d3.min.js"></script>
+<script src="vendor/topojson-client.min.js"></script>
+<script src="vendor/world-110m.js"></script>
+<script>
+/* =====================================================================
+   선교 데이터 — 선교사 추가/변경은 이 부분만 수정하면 됩니다.
+   type: "sent"(파송) | "partner"(협력)
+   보안 지역(C국·H국 등)은 FIELDS에 넣지 말고 SECURE에만 기록합니다.
+   ===================================================================== */
+const HOME = { name: "인천제2교회", coords: [126.70, 37.45] };
+
+// iso: world-atlas 국가 코드(ISO 3166 숫자), coords: [경도, 위도], label: 지도 라벨 위치 보정
+const FIELDS = [
+  { id: "brazil",      name: "브라질",     iso: "076", coords: [-47.88, -15.79], label: [-10, 4, "end"] },
+  { id: "spain",       name: "스페인",     iso: "724", coords: [-3.70, 40.42],   label: [-10, 4, "end"] },
+  { id: "tanzania",    name: "탄자니아",   iso: "834", coords: [35.74, -6.16],   label: [10, 4, "start"] },
+  { id: "southafrica", name: "남아공",     iso: "710", coords: [28.19, -25.75],  label: [10, 4, "start"] },
+  { id: "nepal",       name: "네팔",       iso: "524", coords: [85.32, 27.72],   label: [-10, 4, "end"] },
+  { id: "mongolia",    name: "몽골",       iso: "496", coords: [106.91, 47.89],  label: [0, -12, "middle"] },
+  { id: "vietnam",     name: "베트남",     iso: "704", coords: [105.85, 21.03],  label: [-10, 0, "end"] },
+  { id: "cambodia",    name: "캄보디아",   iso: "116", coords: [104.92, 11.56],  label: [-10, 4, "end"] },
+  { id: "malaysia",    name: "말레이시아", iso: "458", coords: [101.69, 3.14],   label: [-10, 4, "end"] },
+  { id: "singapore",   name: "싱가폴",     iso: "702", coords: [103.82, 1.35],   label: [10, 6, "start"] },
+  { id: "indonesia",   name: "인도네시아", iso: "360", coords: [106.85, -6.21],  label: [-10, 10, "end"] },
+  { id: "philippines", name: "필리핀",     iso: "608", coords: [120.98, 14.60],  label: [10, 4, "start"] },
+];
+
+const MISSIONARIES = [
+  // 파송
+  { name: "이금숙", field: "brazil",   type: "sent" },
+  { name: "이동훈", field: "spain",    type: "sent" },
+  { name: "졸도쉬", field: "C국",      type: "sent", secure: true },
+  { name: "김찬양", field: "H국",      type: "sent", secure: true },
+  { name: "이요엘", field: "tanzania", type: "sent" },
+  // 협력
+  { name: "박광옥", field: "philippines", type: "partner" },
+  { name: "문성보", field: "singapore",   type: "partner" },
+  { name: "황선문", field: "H국",         type: "partner", secure: true },
+  { name: "고성복", field: "tanzania",    type: "partner" },
+  { name: "김성준", field: "southafrica", type: "partner" },
+  { name: "조무한", field: "H국",         type: "partner", secure: true },
+  { name: "김항철", field: "cambodia",    type: "partner" },
+  { name: "최봉석", field: "cambodia",    type: "partner" },
+  { name: "박한철", field: "nepal",       type: "partner" },
+  { name: "지종성", field: "brazil",      type: "partner" },
+  { name: "김미정", field: "mongolia",    type: "partner" },
+  { name: "배솔로몬", field: "H국",       type: "partner", secure: true },
+  { name: "김춘광", field: "vietnam",     type: "partner" },
+  { name: "권용준", field: "indonesia",   type: "partner" },
+  { name: "정동완", field: "philippines", type: "partner" },
+  { name: "박찬호", field: "malaysia",    type: "partner" },
+];
+
+// 보안 지역 선교사 이름을 공개 페이지에서 가릴지 여부 (김찬양 → 김○양)
+const MASK_SECURE_NAMES = true;
+
+/* ===================================================================== */
+
+const TYPE_LABEL = { sent: "파송", partner: "협력" };
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const displayName = (m) => {
+  if (!(m.secure && MASK_SECURE_NAMES)) return m.name;
+  const chars = [...m.name];
+  if (chars.length <= 2) return chars[0] + "○";
+  return chars[0] + "○".repeat(chars.length - 2) + chars[chars.length - 1];
+};
+
+const fieldById = new Map(FIELDS.map((f) => [f.id, f]));
+const byField = d3.group(MISSIONARIES.filter((m) => !m.secure), (m) => m.field);
+const secureByField = d3.group(MISSIONARIES.filter((m) => m.secure), (m) => m.field);
+
+// 아크 = (선교지, 구분) 쌍. 파송 먼저, 각 그룹은 거리 순으로 출발
+const routes = [];
+for (const type of ["sent", "partner"]) {
+  const list = FIELDS.filter((f) => (byField.get(f.id) || []).some((m) => m.type === type))
+    .map((f) => ({ field: f, type, dist: d3.geoDistance(HOME.coords, f.coords) }))
+    .sort((a, b) => a.dist - b.dist);
+  routes.push(...list);
+}
+
+/* ───────── Map ───────── */
+const W = 1000, H = 520;
+const svg = d3.select("#world").attr("viewBox", `0 0 ${W} ${H}`);
+const projection = d3.geoNaturalEarth1().rotate([-35, 0]);
+projection.fitExtent([[10, 10], [W - 10, H + 60]], { type: "Sphere" }); // 남극 쪽은 살짝 잘라 화면을 넓게 씀
+const path = d3.geoPath(projection);
+
+const defs = svg.append("defs");
+defs.append("filter").attr("id", "blur").append("feGaussianBlur").attr("stdDeviation", 2.5);
+const glow = defs.append("filter").attr("id", "glow").attr("x", "-200%").attr("y", "-200%").attr("width", "500%").attr("height", "500%");
+glow.append("feGaussianBlur").attr("stdDeviation", 3).attr("result", "b");
+const merge = glow.append("feMerge");
+merge.append("feMergeNode").attr("in", "b");
+merge.append("feMergeNode").attr("in", "SourceGraphic");
+
+// 지도가 인천에서 퍼져나가듯 펼쳐지는 마스크 (부드러운 가장자리)
+const homeXY = projection(HOME.coords);
+const grad = defs.append("radialGradient").attr("id", "revealGrad");
+grad.append("stop").attr("offset", "0%").attr("stop-color", "#fff");
+grad.append("stop").attr("offset", "78%").attr("stop-color", "#fff");
+grad.append("stop").attr("offset", "100%").attr("stop-color", "#fff").attr("stop-opacity", 0);
+const revealCircle = defs.append("mask").attr("id", "reveal")
+  .append("circle").attr("cx", homeXY[0]).attr("cy", homeXY[1]).attr("r", 0).attr("fill", "url(#revealGrad)");
+const maxR = d3.max([[0, 0], [W, 0], [0, H], [W, H]], (p) => Math.hypot(p[0] - homeXY[0], p[1] - homeXY[1])) * 1.3;
+
+const base = svg.append("g").attr("mask", "url(#reveal)");
+base.append("path").datum({ type: "Sphere" }).attr("class", "sphere").attr("d", path);
+base.append("path").datum(d3.geoGraticule10()).attr("class", "graticule").attr("d", path);
+
+const countries = topojson.feature(WORLD_TOPOLOGY, WORLD_TOPOLOGY.objects.countries).features
+  .filter((f) => f.id !== "010"); // 남극 제외
+const missionIso = new Set(FIELDS.filter((f) => byField.has(f.id)).map((f) => f.iso));
+const countryPaths = base.append("g").selectAll("path").data(countries).join("path")
+  .attr("class", (d) => "country" + (d.id === "410" ? " is-home" : ""))
+  .attr("d", path);
+
+const shock = svg.append("circle").attr("class", "shock").attr("cx", homeXY[0]).attr("cy", homeXY[1]).attr("r", 0).attr("opacity", 0);
+const arcLayer = svg.append("g");
+const markerLayer = svg.append("g");
+const homeLayer = svg.append("g");
+
+// 화면상 곡선(2차 베지어) — 항상 위로 휘도록, 같은 나라 두 번째 노선은 더 높게
+function arcPath(route, sameFieldIndex) {
+  const [x0, y0] = homeXY;
+  const [x1, y1] = projection(route.field.coords);
+  const dx = x1 - x0, dy = y1 - y0, d = Math.hypot(dx, dy);
+  let nx = -dy / d, ny = dx / d;
+  if (ny > 0) { nx = -nx; ny = -ny; }
+  const bend = d * (0.22 + sameFieldIndex * 0.1);
+  const cx = (x0 + x1) / 2 + nx * bend, cy = (y0 + y1) / 2 + ny * bend;
+  return `M${x0},${y0} Q${cx},${cy} ${x1},${y1}`;
+}
+
+const seen = new Map();
+routes.forEach((r) => {
+  const i = seen.get(r.field.id) || 0;
+  seen.set(r.field.id, i + 1);
+  r.d = arcPath(r, i);
+});
+
+const glows = arcLayer.selectAll(".arc-glow").data(routes).join("path")
+  .attr("class", (r) => `arc-glow ${r.type}`).attr("d", (r) => r.d);
+const arcs = arcLayer.selectAll(".arc").data(routes).join("path")
+  .attr("class", (r) => `arc ${r.type}`).attr("d", (r) => r.d);
+arcs.each(function (r) { r.len = this.getTotalLength(); });
+
+// 마커: 선교지별 1개 (파송이 있으면 금색)
+const fieldsOnMap = FIELDS.filter((f) => byField.has(f.id));
+const markers = markerLayer.selectAll(".marker").data(fieldsOnMap).join("g")
+  .attr("class", (f) => "marker " + (byField.get(f.id).some((m) => m.type === "sent") ? "sent" : "partner"))
+  .attr("transform", (f) => `translate(${projection(f.coords)})`)
+  .attr("tabindex", 0)
+  .attr("role", "button")
+  .attr("aria-label", (f) => `${f.name}: ${byField.get(f.id).map((m) => m.name).join(", ")} 선교사`);
+markers.append("circle").attr("class", "ring").attr("r", 3);
+markers.append("circle").attr("class", "dot").attr("r", 0);
+markers.append("circle").attr("class", "hit").attr("r", 14);
+const labels = markers.append("text").attr("class", "label")
+  .attr("x", (f) => f.label[0]).attr("y", (f) => f.label[1]).attr("text-anchor", (f) => f.label[2]);
+labels.append("tspan").text((f) => f.name);
+labels.append("tspan").attr("class", "count").attr("dx", 3).text((f) => byField.get(f.id).length);
+
+// 인천 (출발점)
+const home = homeLayer.append("g").attr("class", "home").attr("transform", `translate(${homeXY})`).attr("opacity", 0);
+home.append("circle").attr("class", "halo").attr("r", 4);
+home.append("circle").attr("class", "core").attr("r", 4.5);
+home.append("text").attr("class", "home-label").attr("x", 10).attr("y", -8).text(HOME.name);
+
+/* ───────── Secure list ───────── */
+const secureList = d3.select("#secureList");
+for (const [field, list] of secureByField) {
+  secureList.append("li").html(`<b>${field}</b><span>${list.length}가정</span>`);
+}
+
+/* ───────── Animation timeline ───────── */
+let runId = 0;
+function play() {
+  const id = ++runId;
+  const T = reduceMotion ? 0 : 1;
+  svg.selectAll("*").interrupt();
+  d3.select("#secureCard").classed("show", false);
+  markers.classed("live", false);
+  countryPaths.classed("is-mission", false);
+
+  // 1) 인천에서 지도가 펼쳐짐
+  revealCircle.attr("r", 0).transition().duration(2200 * T).ease(d3.easeCubicInOut).attr("r", maxR);
+  shock.attr("r", 0).attr("opacity", .8)
+    .transition().duration(2000 * T).ease(d3.easeCubicOut).attr("r", maxR * 0.7).attr("opacity", 0);
+  home.attr("opacity", 0).transition().delay(300 * T).duration(600 * T).attr("opacity", 1);
+
+  // 2) 노선이 순서대로 뻗어나감
+  arcs.attr("stroke-dasharray", (r) => `${r.len} ${r.len}`).attr("stroke-dashoffset", (r) => r.len).attr("opacity", 1);
+  glows.style("opacity", 0);
+  markers.select(".dot").attr("r", 0);
+  labels.style("opacity", 0);
+  arcLayer.selectAll(".comet").remove();
+
+  const start = 1500, gap = 260, fly = 1300;
+  routes.forEach((r, i) => {
+    const delay = (start + i * gap) * T;
+    const node = arcs.filter((d) => d === r);
+    node.transition().delay(delay).duration(fly * T).ease(d3.easeCubicInOut).attr("stroke-dashoffset", 0)
+      .on("end", () => {
+        if (id !== runId) return;
+        land(r);
+      });
+
+    if (T) {
+      const el = node.node();
+      const comet = arcLayer.append("circle").attr("class", `comet ${r.type}`).attr("r", 2.8).attr("opacity", 0);
+      comet.transition().delay(delay).duration(fly).ease(d3.easeCubicInOut)
+        .attr("opacity", 1)
+        .attrTween("transform", () => (t) => {
+          const p = el.getPointAtLength(t * r.len);
+          return `translate(${p.x},${p.y})`;
+        })
+        .transition().duration(300).attr("r", 7).attr("opacity", 0).remove();
+    }
+  });
+
+  const total = (start + routes.length * gap + fly) * T;
+  d3.timeout(() => {
+    if (id !== runId) return;
+    d3.select("#secureCard").classed("show", true);
+    startFlow();
+  }, total + 200);
+}
+
+function land(r) {
+  glows.filter((d) => d === r).transition().duration(reduceMotion ? 0 : 700).style("opacity", 0.18);
+  const m = markers.filter((f) => f === r.field);
+  m.select(".dot").transition().duration(500).ease(d3.easeBackOut.overshoot(3)).attr("r", 4);
+  m.select(".label").transition().duration(500).style("opacity", 1);
+  m.classed("live", true);
+  countryPaths.filter((c) => c.id === r.field.iso).classed("is-mission", true);
+}
+
+// 3) 이후 노선 위로 빛이 천천히 흐르는 효과 (반복)
+function startFlow() {
+  if (reduceMotion) return;
+  const id = runId;
+  arcs.attr("stroke-dasharray", null).attr("stroke-dashoffset", null);
+  const pulse = () => {
+    if (id !== runId) return;
+    const r = routes[Math.floor(Math.random() * routes.length)];
+    const el = arcs.filter((d) => d === r).node();
+    arcLayer.append("circle").attr("class", `comet ${r.type}`).attr("r", 2).attr("opacity", 0)
+      .transition().duration(2400).ease(d3.easeSinInOut)
+      .attr("opacity", 0.9)
+      .attrTween("transform", () => (t) => {
+        const p = el.getPointAtLength(t * r.len);
+        return `translate(${p.x},${p.y})`;
+      })
+      .transition().duration(250).attr("opacity", 0).remove();
+    d3.timeout(pulse, 700);
+  };
+  pulse();
+}
+
+/* ───────── Interaction ───────── */
+const tooltip = d3.select("#tooltip");
+const wrap = document.querySelector(".map-wrap");
+
+function focusField(f) {
+  arcs.classed("dim", (r) => r.field !== f).classed("hot", (r) => r.field === f);
+  glows.classed("dim", (r) => r.field !== f);
+  const [x, y] = projection(f.coords);
+  const box = document.getElementById("world").getBoundingClientRect();
+  const wbox = wrap.getBoundingClientRect();
+  const k = box.width / W;
+  const items = byField.get(f.id)
+    .map((m) => `<li><span class="tag ${m.type}">${TYPE_LABEL[m.type]}</span>${m.name} 선교사</li>`).join("");
+  tooltip.html(`<h4>${f.name}</h4><ul>${items}</ul>`)
+    .style("left", `${box.left - wbox.left + x * k}px`)
+    .style("top", `${box.top - wbox.top + y * k}px`)
+    .classed("show", true);
+}
+function clearFocus() {
+  arcs.classed("dim", false).classed("hot", false);
+  glows.classed("dim", false);
+  tooltip.classed("show", false);
+}
+
+markers
+  .on("mouseenter focus", (e, f) => focusField(f))
+  .on("mouseleave blur", clearFocus)
+  .on("click", (e, f) => { e.stopPropagation(); focusField(f); });
+svg.on("click", clearFocus);
+document.getElementById("replay").addEventListener("click", () => { clearFocus(); play(); });
+
+/* ───────── Cards ───────── */
+const cards = d3.select("#cards");
+const cardData = [
+  ...fieldsOnMap.map((f) => ({ field: f, title: f.name, list: byField.get(f.id) })),
+  ...[...secureByField].map(([name, list]) => ({ title: name, list, secure: true })),
+];
+const card = cards.selectAll(".card").data(cardData).join("article")
+  .attr("class", (d) => "card" + (d.secure ? " secure" : ""))
+  .attr("tabindex", (d) => (d.secure ? null : 0));
+card.append("h3").html((d) => `${d.title} <small>${d.list.length}명</small>`);
+card.append("ul").selectAll("li").data((d) => d.list).join("li")
+  .html((m) => `<span>${displayName(m)} 선교사</span><span class="tag ${m.type}">${TYPE_LABEL[m.type]}</span>`);
+
+card.filter((d) => !d.secure).on("click keydown", (e, d) => {
+  if (e.type === "keydown" && e.key !== "Enter") return;
+  document.getElementById("map").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+  setTimeout(() => focusField(d.field), reduceMotion ? 0 : 600);
+});
+
+document.querySelectorAll(".filters button").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const type = btn.dataset.filter;
+    document.querySelectorAll(".filters button").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+    card.attr("hidden", (d) => (type === "all" || d.list.some((m) => m.type === type) ? null : ""));
+    card.selectAll("li").style("display", (m) => (type === "all" || m.type === type ? null : "none"));
+  });
+});
+
+/* ───────── Stats count-up ───────── */
+const counts = {
+  total: MISSIONARIES.length,
+  sent: MISSIONARIES.filter((m) => m.type === "sent").length,
+  partner: MISSIONARIES.filter((m) => m.type === "partner").length,
+  fields: fieldsOnMap.length + secureByField.size,
+};
+const statObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (!entry.isIntersecting) return;
+    const el = entry.target, to = counts[el.dataset.count];
+    d3.select(el).transition().duration(reduceMotion ? 0 : 1400).ease(d3.easeCubicOut)
+      .tween("text", () => { const i = d3.interpolateRound(0, to); return (t) => { el.textContent = i(t); }; });
+    statObserver.unobserve(el);
+  });
+}, { threshold: 0.4 });
+document.querySelectorAll("[data-count]").forEach((el) => statObserver.observe(el));
+
+play();
+</script>
+</body>
+</html>
