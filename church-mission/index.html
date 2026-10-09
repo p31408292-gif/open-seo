@@ -2,265 +2,303 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>인천제2교회 세계선교</title>
-<meta name="description" content="인천제2교회가 파송하고 협력하는 세계 선교 현황 — 인천에서 땅끝까지." />
+<meta name="description" content="인천제2교회가 파송하고 협력하는 세계 선교 현황 — 인천에서 땅 끝까지." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@500;700;900&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@300;500;700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet" />
 <style>
+  /* Layout: 새벽 하늘 히어로(점묘 세계지도 + 빛의 노선) → 지역별 선교사 명부 → 새벽빛 기도 띠 */
   :root {
-    --night: #0a1222;
-    --night-2: #101c33;
-    --land: #1c2b47;
-    --land-edge: #2a3d5f;
-    --land-active: #2c4a78;
-    --sent: #f4c25b;
-    --partner: #62d6c6;
-    --home: #ff8a7a;
-    --ink-on-dark: #eef2f8;
-    --muted-on-dark: #9fb0c9;
+    /* 새벽 하늘 (히어로는 항상 이 색) */
+    --sky-0: #060a1c;
+    --sky-1: #121a42;
+    --sky-2: #2a2758;
+    --dawn: #ff9e6b;
+    --gold: #ffcf6e;
+    --blue: #8fb6ff;
+    --rose: #ff7d8c;
+    --dot: #36406f;
+    --on-sky: #f3f1fb;
+    --on-sky-muted: #a3a8cc;
 
-    --bg: #f8f5ef;
+    /* 본문 영역 */
+    --bg: #f3f4fa;
     --surface: #ffffff;
-    --ink: #1a2233;
-    --muted: #5f6b80;
-    --line: #e6e0d4;
-    --sent-ink: #a8750f;
-    --partner-ink: #13857a;
-    --radius: 16px;
+    --ink: #161a35;
+    --muted: #5d6286;
+    --line: #dde0ee;
+    --gold-ink: #a8700a;
+    --blue-ink: #2d5fc4;
+    --focus: #5b6cff;
+
+    --serif: "Hahmlet", "Noto Serif KR", "Apple SD Gothic Neo", serif;
+    --sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+    --gutter: clamp(16px, 4vw, 56px);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #0e1626;
-      --surface: #152036;
-      --ink: #e9eef6;
-      --muted: #9aa8bf;
-      --line: #24324d;
-      --sent-ink: #f4c25b;
-      --partner-ink: #62d6c6;
+      --bg: #0b1027; --surface: #121939; --ink: #eceefa; --muted: #a0a6c8; --line: #252d58;
+      --gold-ink: #ffcf6e; --blue-ink: #8fb6ff; --focus: #9aa6ff; color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #0e1626;
-    --surface: #152036;
-    --ink: #e9eef6;
-    --muted: #9aa8bf;
-    --line: #24324d;
-    --sent-ink: #f4c25b;
-    --partner-ink: #62d6c6;
+    --bg: #0b1027; --surface: #121939; --ink: #eceefa; --muted: #a0a6c8; --line: #252d58;
+    --gold-ink: #ffcf6e; --blue-ink: #8fb6ff; --focus: #9aa6ff; color-scheme: dark;
   }
 
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: "Noto Sans KR", system-ui, -apple-system, sans-serif;
-    line-height: 1.6;
-    word-break: keep-all;
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--sans); font-size: 16px; line-height: 1.65;
+    word-break: keep-all; -webkit-font-smoothing: antialiased;
   }
   a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 6px; }
+  h1, h2, h3 { text-wrap: balance; }
 
   /* ───────── Header ───────── */
   .site-header {
     position: absolute; inset: 0 0 auto 0; z-index: 10;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 18px clamp(16px, 4vw, 48px);
-    color: var(--ink-on-dark);
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: calc(20px + env(safe-area-inset-top, 0px)) var(--gutter) 20px;
+    color: var(--on-sky);
   }
-  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; letter-spacing: -0.01em; }
-  .brand-mark {
-    width: 30px; height: 30px; border-radius: 50%;
-    display: grid; place-items: center;
-    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18);
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .brand svg { flex: none; }
+  .brand b { display: block; font-family: var(--serif); font-weight: 700; font-size: 17px; letter-spacing: -0.01em; line-height: 1.2; }
+  .brand small { display: block; font-size: 10.5px; letter-spacing: 0.22em; color: var(--on-sky-muted); line-height: 1.3; }
+  .site-nav { display: flex; gap: 4px; font-size: 14px; }
+  .site-nav a {
+    text-decoration: none; color: var(--on-sky-muted); padding: 6px 14px; border-radius: 999px;
+    transition: color .2s, background .2s;
   }
-  .site-nav { display: flex; gap: clamp(12px, 2.4vw, 28px); font-size: 14px; }
-  .site-nav a { text-decoration: none; color: var(--muted-on-dark); transition: color .2s; }
-  .site-nav a:hover { color: #fff; }
+  .site-nav a:hover { color: var(--on-sky); background: rgba(255,255,255,0.07); }
 
   /* ───────── Hero ───────── */
   .hero {
-    position: relative; overflow: hidden;
+    position: relative; overflow: hidden; isolation: isolate;
+    color: var(--on-sky);
     background:
-      radial-gradient(1200px 600px at 72% 35%, rgba(70,110,180,0.22), transparent 60%),
-      radial-gradient(900px 500px at 15% 90%, rgba(98,214,198,0.08), transparent 60%),
-      linear-gradient(180deg, var(--night) 0%, var(--night-2) 100%);
-    color: var(--ink-on-dark);
-    padding: 96px 0 40px;
+      radial-gradient(60% 50% at 78% 48%, rgba(255,125,140,0.16), transparent 70%),
+      radial-gradient(120% 70% at 50% 120%, rgba(255,158,107,0.22), transparent 60%),
+      linear-gradient(180deg, var(--sky-0) 0%, var(--sky-1) 55%, var(--sky-2) 100%);
+    padding-block: calc(116px + env(safe-area-inset-top, 0px)) 0;
   }
-  .hero-copy { text-align: center; padding: 0 16px; position: relative; z-index: 2; }
-  .verse {
-    margin: 0 0 14px; font-family: "Noto Serif KR", serif; font-size: clamp(13px, 1.6vw, 16px);
-    color: var(--muted-on-dark); letter-spacing: 0.02em;
-    opacity: 0; transform: translateY(8px); animation: rise .9s .2s ease-out forwards;
+  .stars { position: absolute; inset: 0; z-index: -1; opacity: .7; pointer-events: none; }
+
+  .hero-copy { padding-inline: var(--gutter); text-align: center; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    margin: 0 0 18px; font-size: 12px; letter-spacing: 0.24em; color: var(--on-sky-muted);
   }
+  .eyebrow::before, .eyebrow::after { content: ""; width: 28px; height: 1px; background: currentColor; opacity: .5; }
   .hero h1 {
-    margin: 0; font-family: "Noto Serif KR", serif; font-weight: 900;
-    font-size: clamp(30px, 5.6vw, 64px); line-height: 1.15; letter-spacing: -0.02em;
-    opacity: 0; transform: translateY(10px); animation: rise 1s .4s ease-out forwards;
+    margin: 0; font-family: var(--serif); font-weight: 300;
+    font-size: clamp(40px, 7.4vw, 92px); line-height: 1.05; letter-spacing: -0.035em;
   }
-  .hero h1 em { font-style: normal; color: var(--sent); }
-  .hero-sub {
-    margin: 14px auto 0; max-width: 560px; color: var(--muted-on-dark); font-size: clamp(14px, 1.7vw, 17px);
-    opacity: 0; animation: rise 1s .6s ease-out forwards;
+  .hero h1 strong {
+    font-weight: 800;
+    background: linear-gradient(100deg, var(--gold) 10%, var(--dawn) 60%, var(--rose) 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
   }
-  @keyframes rise { to { opacity: 1; transform: none; } }
+  .hero-sub { margin: 18px auto 0; max-width: 34em; font-size: clamp(15px, 1.6vw, 17px); color: var(--on-sky-muted); }
+  .verse { margin: 10px 0 0; font-family: var(--serif); font-size: 14px; color: var(--on-sky-muted); opacity: .8; }
 
-  .map-wrap { position: relative; max-width: 1280px; margin: 8px auto 0; padding: 0 8px; }
-  #world { display: block; width: 100%; height: auto; overflow: visible; }
+  .hero-copy > * { animation: rise 1s cubic-bezier(.2,.7,.2,1) both; }
+  .hero-copy > :nth-child(2) { animation-delay: .1s; }
+  .hero-copy > :nth-child(3) { animation-delay: .2s; }
+  .hero-copy > :nth-child(4) { animation-delay: .3s; }
+  @keyframes rise { from { opacity: .001; transform: translateY(12px); } }
 
-  .sphere { fill: rgba(255,255,255,0.015); stroke: rgba(255,255,255,0.06); }
-  .graticule { fill: none; stroke: rgba(255,255,255,0.05); stroke-width: .5; }
-  .country { fill: var(--land); stroke: var(--land-edge); stroke-width: .4; transition: fill .6s; }
-  .country.is-mission { fill: var(--land-active); }
-  .country.is-home { fill: #4a3a52; }
+  .map-wrap { position: relative; max-width: 1320px; margin: 20px auto 0; padding-inline: 8px; }
+  .map-stage { position: relative; width: 100%; aspect-ratio: 1000 / 520; }
+  .map-stage canvas, .map-stage svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .map-stage svg { overflow: visible; }
 
-  .arc { fill: none; stroke-width: 1.6; stroke-linecap: round; }
-  .arc.sent { stroke: var(--sent); }
-  .arc.partner { stroke: var(--partner); stroke-width: 1.2; }
-  .arc-glow { fill: none; stroke-width: 5; opacity: .18; filter: url(#blur); }
-  .arc-glow.sent { stroke: var(--sent); }
-  .arc-glow.partner { stroke: var(--partner); }
-  .arc.dim, .arc-glow.dim { opacity: .12 !important; transition: opacity .3s; }
-  .arc.hot { stroke-width: 2.6; }
+  .arc { fill: none; stroke-linecap: round; }
+  .arc.sent { stroke-width: 1.7; }
+  .arc.partner { stroke-width: 1.15; }
+  .trail { fill: none; stroke-linecap: round; stroke-width: 2.4; filter: url(#glow); pointer-events: none; }
+  .trail.sent { stroke: #fff1cf; }
+  .trail.partner { stroke: #e3edff; }
+  .arc.dim { opacity: .1; }
+  .arc, .route-group { transition: opacity .35s; }
+  .route-group.dim { opacity: .12; }
+  .route-group.hot .arc { stroke-width: 2.6; }
 
-  .comet { filter: url(#glow); }
-  .comet.sent { fill: #fff3d1; }
-  .comet.partner { fill: #d9fff9; }
-
-  .marker { cursor: pointer; }
-  .marker .ring { fill: none; stroke-width: 1.2; opacity: 0; }
-  .marker .dot { stroke: var(--night); stroke-width: 1.2; }
-  .marker.sent .dot { fill: var(--sent); }
-  .marker.partner .dot { fill: var(--partner); }
-  .marker.sent .ring { stroke: var(--sent); }
-  .marker.partner .ring { stroke: var(--partner); }
-  .marker.live .ring { animation: ping 2.8s ease-out infinite; }
-  @keyframes ping {
-    0% { r: 3; opacity: .9; }
-    80%, 100% { r: 16; opacity: 0; }
-  }
+  .marker { cursor: pointer; outline: none; }
+  .marker .ring { fill: none; stroke-width: 1; opacity: 0; }
+  .marker .dot { stroke: var(--sky-0); stroke-width: 1.4; }
+  .marker.sent .dot { fill: var(--gold); }
+  .marker.partner .dot { fill: var(--blue); }
+  .marker.sent .ring { stroke: var(--gold); }
+  .marker.partner .ring { stroke: var(--blue); }
+  .marker.live .ring { animation: ping 3.2s ease-out infinite; }
+  .marker:nth-child(3n).live .ring { animation-delay: 1s; }
+  .marker:nth-child(3n+1).live .ring { animation-delay: 2s; }
+  .marker:focus-visible .dot { stroke: #fff; stroke-width: 2; }
+  @keyframes ping { 0% { r: 3; opacity: .9; } 75%, 100% { r: 18; opacity: 0; } }
   .marker .hit { fill: transparent; }
 
-  .label { font-size: 11px; fill: var(--ink-on-dark); paint-order: stroke; stroke: var(--night); stroke-width: 3px; stroke-linejoin: round; pointer-events: none; opacity: 0; }
-  .label .count { fill: var(--muted-on-dark); font-size: 9.5px; }
-
-  .home .core { fill: var(--home); filter: url(#glow); }
-  .home .halo { fill: none; stroke: var(--home); stroke-width: 1; animation: ping 2.2s ease-out infinite; }
-  .home-label { font-size: 12px; font-weight: 700; fill: #fff; paint-order: stroke; stroke: var(--night); stroke-width: 3.5px; stroke-linejoin: round; }
-
-  .shock { fill: none; stroke: rgba(255,255,255,0.35); stroke-width: 1; }
-
-  /* overlay UI on map */
-  .legend {
-    position: absolute; left: clamp(16px, 3vw, 40px); bottom: 8px;
-    display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; color: var(--muted-on-dark);
+  .label {
+    font-family: var(--sans); font-size: 11.5px; font-weight: 500; fill: var(--on-sky);
+    paint-order: stroke; stroke: var(--sky-0); stroke-width: 3.5px; stroke-linejoin: round;
+    pointer-events: none; opacity: 0;
   }
-  .legend span { display: inline-flex; align-items: center; gap: 8px; }
-  .legend i { width: 18px; height: 2px; border-radius: 2px; display: inline-block; }
-  .legend .l-sent i { background: var(--sent); box-shadow: 0 0 8px var(--sent); }
-  .legend .l-partner i { background: var(--partner); box-shadow: 0 0 8px var(--partner); }
+  .label .count { fill: var(--on-sky-muted); font-weight: 400; font-size: 10px; }
 
-  .replay {
-    position: absolute; right: clamp(16px, 3vw, 40px); bottom: 4px;
-    border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); color: var(--ink-on-dark);
-    font: inherit; font-size: 13px; padding: 7px 14px; border-radius: 999px; cursor: pointer;
-    transition: background .2s;
-  }
-  .replay:hover { background: rgba(255,255,255,0.14); }
+  .home .core { fill: #fff; }
+  .home .glow { fill: url(#homeGlow); }
+  .home .halo { fill: none; stroke: var(--rose); stroke-width: 1; animation: ping 2.4s ease-out infinite; }
+  .home-label { font-family: var(--serif); font-size: 13px; font-weight: 700; fill: #fff; paint-order: stroke; stroke: var(--sky-0); stroke-width: 4px; stroke-linejoin: round; }
+  .home-sub { font-size: 9.5px; letter-spacing: .18em; fill: var(--on-sky-muted); paint-order: stroke; stroke: var(--sky-0); stroke-width: 3px; }
+
+  .shock { fill: none; stroke: rgba(255,210,180,0.5); stroke-width: 1; }
 
   .secure-card {
-    position: absolute; left: clamp(16px, 3vw, 40px); top: 38%;
-    max-width: 230px; padding: 14px 16px; border-radius: 14px;
-    background: rgba(10,18,34,0.72); border: 1px dashed rgba(255,255,255,0.22);
-    backdrop-filter: blur(6px); font-size: 13px; color: var(--muted-on-dark);
-    opacity: 0; transform: translateY(8px); transition: opacity .8s, transform .8s;
+    position: absolute; left: clamp(16px, 4vw, 64px); top: 47%;
+    width: 232px; padding: 16px 18px; border-radius: 18px;
+    background: linear-gradient(160deg, rgba(255,255,255,0.09), rgba(255,255,255,0.03));
+    border: 1px solid rgba(255,255,255,0.14);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    font-size: 13px; color: var(--on-sky-muted);
+    opacity: .001; transform: translateY(10px); transition: opacity 1s, transform 1s;
   }
   .secure-card.show { opacity: 1; transform: none; }
-  .secure-card strong { display: flex; align-items: center; gap: 6px; color: var(--ink-on-dark); font-size: 14px; margin-bottom: 4px; }
-  .secure-card ul { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; }
+  .secure-card h2 { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; font-family: var(--serif); font-size: 15px; font-weight: 700; color: var(--on-sky); }
+  .secure-card p { margin: 0; line-height: 1.55; }
+  .secure-card ul { list-style: none; margin: 12px 0 0; padding: 12px 0 0; border-top: 1px solid rgba(255,255,255,0.1); display: grid; gap: 6px; }
   .secure-card li { display: flex; justify-content: space-between; gap: 12px; }
-  .secure-card li b { color: var(--ink-on-dark); font-weight: 500; }
+  .secure-card li b { color: var(--on-sky); font-weight: 500; }
 
   .tooltip {
-    position: absolute; z-index: 5; pointer-events: none;
-    min-width: 160px; padding: 12px 14px; border-radius: 12px;
-    background: rgba(8,14,28,0.94); border: 1px solid rgba(255,255,255,0.14);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.35);
-    color: var(--ink-on-dark); font-size: 13px;
-    opacity: 0; transform: translate(-50%, calc(-100% - 14px)); transition: opacity .15s;
+    position: absolute; z-index: 5; pointer-events: none; min-width: 176px;
+    padding: 14px 16px; border-radius: 14px;
+    background: rgba(8,12,32,0.92); border: 1px solid rgba(255,255,255,0.14);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.4);
+    color: var(--on-sky); font-size: 13.5px;
+    opacity: 0; transform: translate(-50%, calc(-100% - 16px)); transition: opacity .18s;
   }
   .tooltip.show { opacity: 1; }
-  .tooltip h4 { margin: 0 0 6px; font-size: 15px; }
-  .tooltip ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+  .tooltip h3 { margin: 0 0 8px; font-family: var(--serif); font-size: 17px; font-weight: 700; }
+  .tooltip ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
   .tooltip li { display: flex; align-items: center; gap: 8px; }
 
-  .tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 999px; line-height: 1.6; }
-  .tag.sent { background: rgba(244,194,91,0.16); color: var(--sent); }
-  .tag.partner { background: rgba(98,214,198,0.16); color: var(--partner); }
+  .pip { width: 7px; height: 7px; border-radius: 50%; flex: none; display: inline-block; }
+  .pip.sent { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+  .pip.partner { background: var(--blue); box-shadow: 0 0 8px var(--blue); }
 
-  /* ───────── Stats ───────── */
-  .stats {
-    max-width: 1080px; margin: -1px auto 0; padding: 40px 16px 8px;
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  /* hero 하단 바: 범례 · 현황 · 다시 보기 */
+  .hero-bar {
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px;
+    max-width: 1320px; margin: 8px auto 0; padding: 22px var(--gutter) 30px;
+    border-top: 1px solid rgba(255,255,255,0.08);
   }
-  .stat { text-align: center; padding: 18px 8px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); }
-  .stat b { display: block; font-family: "Noto Serif KR", serif; font-size: clamp(28px, 4vw, 40px); line-height: 1.1; }
-  .stat span { color: var(--muted); font-size: 14px; }
-  .stat.sent b { color: var(--sent-ink); }
-  .stat.partner b { color: var(--partner-ink); }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: var(--on-sky-muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .figures { display: flex; gap: clamp(18px, 3.5vw, 44px); }
+  .figure { text-align: center; }
+  .figure b {
+    display: block; font-family: var(--serif); font-weight: 500; font-size: clamp(26px, 3.2vw, 38px);
+    line-height: 1.05; font-variant-numeric: tabular-nums; letter-spacing: -0.02em;
+  }
+  .figure.sent b { color: var(--gold); }
+  .figure.partner b { color: var(--blue); }
+  .figure span { font-size: 12px; letter-spacing: 0.12em; color: var(--on-sky-muted); }
+  .replay {
+    justify-self: end; display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid rgba(255,255,255,0.2); background: transparent; color: var(--on-sky);
+    font: inherit; font-size: 13px; padding: 8px 16px; border-radius: 999px; cursor: pointer;
+    transition: background .2s, border-color .2s;
+  }
+  .replay:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.35); }
 
-  /* ───────── Missionaries ───────── */
-  section.block { max-width: 1080px; margin: 0 auto; padding: 64px 16px 16px; }
-  .block-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; }
-  .block-head h2 { margin: 0; font-family: "Noto Serif KR", serif; font-size: clamp(24px, 3.2vw, 34px); letter-spacing: -0.02em; }
-  .block-head p { margin: 4px 0 0; color: var(--muted); }
+  /* ───────── Roster ───────── */
+  .roster { max-width: 1120px; margin: 0 auto; padding: 96px var(--gutter) 40px; }
+  .roster-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: 40px; }
+  .kicker { margin: 0 0 10px; font-size: 12px; letter-spacing: 0.24em; color: var(--muted); }
+  .roster-head h2 { margin: 0; font-family: var(--serif); font-weight: 700; font-size: clamp(30px, 4vw, 46px); line-height: 1.15; letter-spacing: -0.03em; }
+  .roster-head p { margin: 10px 0 0; color: var(--muted); max-width: 30em; }
 
-  .filters { display: flex; gap: 6px; padding: 4px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
+  .filters { display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
   .filters button {
+    display: inline-flex; align-items: center; gap: 7px;
     border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 14px;
-    padding: 6px 14px; border-radius: 999px; cursor: pointer;
+    padding: 7px 16px; border-radius: 999px; cursor: pointer; transition: background .2s, color .2s;
   }
   .filters button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
 
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
-  .card {
-    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
-    padding: 18px; cursor: pointer; transition: transform .2s, box-shadow .2s, border-color .2s;
+  .region { display: grid; grid-template-columns: 180px 1fr; gap: 8px 32px; padding-block: 28px; border-top: 1px solid var(--line); }
+  .region[hidden] { display: none; }
+  .region-name { position: sticky; top: 16px; align-self: start; }
+  .region-name h3 { margin: 0; font-family: var(--serif); font-weight: 700; font-size: 20px; letter-spacing: -0.02em; }
+  .region-name span { font-size: 13px; color: var(--muted); }
+
+  .fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .field {
+    min-width: 0; text-align: left; font: inherit; color: inherit; cursor: pointer;
+    padding: 18px 20px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line);
+    transition: transform .25s, box-shadow .25s, border-color .25s;
   }
-  .card:hover, .card:focus-visible { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(20,30,50,0.08); border-color: var(--muted); outline: none; }
-  .card h3 { margin: 0 0 10px; font-size: 18px; display: flex; align-items: center; justify-content: space-between; }
-  .card h3 small { font-size: 13px; font-weight: 400; color: var(--muted); }
-  .card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-  .card li { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 15px; }
-  .card .tag.sent { color: var(--sent-ink); }
-  .card .tag.partner { color: var(--partner-ink); }
-  .card.secure { border-style: dashed; cursor: default; }
-  .card.secure h3::before { content: "🔒"; font-size: 14px; margin-right: 6px; }
-  .card.secure h3 small { margin-left: auto; }
-  .card[hidden] { display: none; }
+  .field:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--blue-ink) 35%, var(--line)); box-shadow: 0 14px 30px -18px rgba(22,26,53,0.35); }
+  .field[hidden] { display: none; }
+  .field-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+  .field-top strong { font-family: var(--serif); font-weight: 700; font-size: 21px; letter-spacing: -0.02em; }
+  .field-top small { font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .field ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  .field li {
+    display: inline-flex; align-items: center; gap: 7px; padding: 4px 11px 4px 9px;
+    border-radius: 999px; font-size: 14.5px; background: var(--bg); border: 1px solid var(--line);
+  }
+  .field li[hidden] { display: none; }
+  .field li em { font-style: normal; font-size: 11px; font-weight: 600; letter-spacing: .04em; }
+  .field li.sent em { color: var(--gold-ink); }
+  .field li.partner em { color: var(--blue-ink); }
+  .field li .pip { box-shadow: none; }
+  .field li.sent .pip { background: var(--gold-ink); }
+  .field li.partner .pip { background: var(--blue-ink); }
+  .field.secure { cursor: default; border-style: dashed; background: transparent; }
+  .field.secure:hover { transform: none; box-shadow: none; border-color: var(--line); }
+  .secure-note { margin: 8px 0 0; font-size: 13px; color: var(--muted); grid-column: 2; }
 
   /* ───────── Prayer ───────── */
   .prayer {
-    margin-top: 48px; padding: 72px 16px; text-align: center;
-    background: linear-gradient(180deg, var(--night-2), var(--night)); color: var(--ink-on-dark);
+    position: relative; overflow: hidden; isolation: isolate;
+    margin-top: 72px; padding: 112px var(--gutter) 120px; text-align: center; color: var(--on-sky);
+    background:
+      radial-gradient(80% 120% at 50% 110%, rgba(255,158,107,0.55), transparent 60%),
+      radial-gradient(50% 80% at 50% 100%, rgba(255,207,110,0.5), transparent 60%),
+      linear-gradient(180deg, var(--sky-0), var(--sky-2));
   }
-  .prayer blockquote { margin: 0 auto; max-width: 720px; font-family: "Noto Serif KR", serif; font-size: clamp(18px, 2.4vw, 24px); line-height: 1.7; }
-  .prayer cite { display: block; margin-top: 12px; font-style: normal; color: var(--muted-on-dark); font-size: 14px; }
-  .prayer .cta { display: inline-block; margin-top: 28px; padding: 12px 22px; border-radius: 999px; background: var(--sent); color: #1a1406; font-weight: 700; text-decoration: none; }
+  .prayer blockquote { margin: 0 auto; max-width: 20em; font-family: var(--serif); font-weight: 300; font-size: clamp(24px, 3.4vw, 40px); line-height: 1.45; letter-spacing: -0.02em; }
+  .prayer blockquote strong { font-weight: 700; }
+  .prayer cite { display: block; margin-top: 18px; font-style: normal; font-size: 13px; letter-spacing: .2em; color: var(--on-sky-muted); }
+  .prayer .cta {
+    display: inline-flex; align-items: center; gap: 10px; margin-top: 40px; padding: 14px 26px; border-radius: 999px;
+    background: var(--on-sky); color: var(--sky-0); font-weight: 600; text-decoration: none;
+    box-shadow: 0 10px 40px -10px rgba(255,207,110,0.8); transition: transform .2s;
+  }
+  .prayer .cta:hover { transform: translateY(-2px); }
 
-  footer { padding: 28px 16px 40px; text-align: center; color: var(--muted); font-size: 13px; }
+  footer { padding: 32px var(--gutter) calc(40px + env(safe-area-inset-bottom, 0px)); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; color: var(--muted); font-size: 13px; }
+  footer b { font-family: var(--serif); color: var(--ink); font-weight: 700; }
 
-  @media (max-width: 760px) {
+  @media (max-width: 860px) {
+    .hero-bar { grid-template-columns: 1fr auto; }
+    .figures { grid-column: 1 / -1; grid-row: 1; justify-content: space-around; padding-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .region { grid-template-columns: 1fr; }
+    .region-name { position: static; }
+    .secure-note { grid-column: 1; }
+  }
+  @media (max-width: 720px) {
     .site-nav { display: none; }
-    .hero { padding-top: 84px; }
     .label { display: none; }
-    .secure-card { position: static; margin: 16px 16px 0; max-width: none; }
-    .legend, .replay { position: static; }
-    .map-meta { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px 0; }
-    .stats { grid-template-columns: repeat(2, 1fr); }
+    .home-sub { display: none; }
+    .secure-card { position: static; width: auto; margin: 18px 8px 0; }
+    .hero { padding-top: calc(100px + env(safe-area-inset-top, 0px)); }
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
@@ -270,11 +308,12 @@
 <body>
 
 <header class="site-header">
-  <a class="brand" href="#top">
-    <span class="brand-mark" aria-hidden="true">
-      <svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M7 0v16M1.5 5h11" stroke="#f4c25b" stroke-width="2" stroke-linecap="round"/></svg>
-    </span>
-    인천제2교회 세계선교
+  <a class="brand" href="#top" aria-label="인천제2교회 세계선교 처음으로">
+    <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
+      <circle cx="17" cy="17" r="16" fill="none" stroke="rgba(255,255,255,0.25)" />
+      <path d="M17 8v18M11.5 14h11" stroke="#ffcf6e" stroke-width="2" stroke-linecap="round" />
+    </svg>
+    <span><b>인천제2교회</b><small>WORLD MISSION</small></span>
   </a>
   <nav class="site-nav" aria-label="주 메뉴">
     <a href="#map">선교지도</a>
@@ -285,62 +324,77 @@
 
 <main id="top">
   <section class="hero" id="map" aria-label="세계 선교 지도">
+    <canvas class="stars" id="stars" aria-hidden="true"></canvas>
     <div class="hero-copy">
-      <p class="verse">“땅 끝까지 이르러 내 증인이 되리라” — 사도행전 1:8</p>
-      <h1>인천에서, <em>땅 끝</em>까지</h1>
-      <p class="hero-sub">인천제2교회가 파송하고 협력하는 선교사님들이 열방에서 복음의 길을 내고 있습니다.</p>
+      <p class="eyebrow">인천제2교회 세계선교</p>
+      <h1>인천에서, <strong>땅 끝</strong>까지</h1>
+      <p class="hero-sub">인천제2교회가 파송하고 협력하는 선교사님들이 열방 곳곳에서 복음의 새벽을 열고 있습니다.</p>
+      <p class="verse">“땅 끝까지 이르러 내 증인이 되리라” · 사도행전 1:8</p>
     </div>
 
     <div class="map-wrap">
-      <svg id="world" role="img" aria-label="대한민국 인천에서 세계 각국 선교지로 이어지는 선교 지도"></svg>
-      <aside class="secure-card" id="secureCard" aria-label="보안 지역 사역">
-        <strong>🔒 보안 지역 사역</strong>
-        선교사님의 안전을 위해 위치를 지도에 표시하지 않습니다.
+      <div class="map-stage">
+        <canvas id="dots" aria-hidden="true"></canvas>
+        <svg id="world" viewBox="0 0 1000 520" role="img" aria-label="대한민국 인천에서 세계 각국 선교지로 이어지는 선교 지도"></svg>
+      </div>
+      <aside class="secure-card" id="secureCard" aria-labelledby="secureTitle">
+        <h2 id="secureTitle">
+          <svg width="14" height="16" viewBox="0 0 14 16" aria-hidden="true"><rect x="1" y="7" width="12" height="8" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M4 7V5a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          보안 지역 사역
+        </h2>
+        <p>선교사님의 안전을 위해 위치를 지도에 표시하지 않습니다.</p>
         <ul id="secureList"></ul>
       </aside>
-      <div class="map-meta">
-        <div class="legend">
-          <span class="l-sent"><i></i>파송 선교사</span>
-          <span class="l-partner"><i></i>협력 선교사</span>
-        </div>
-        <button class="replay" id="replay" type="button">↻ 다시 보기</button>
-      </div>
       <div class="tooltip" id="tooltip" role="status"></div>
+    </div>
+
+    <div class="hero-bar">
+      <div class="legend">
+        <span><i class="pip sent"></i>파송 선교사</span>
+        <span><i class="pip partner"></i>협력 선교사</span>
+      </div>
+      <div class="figures" aria-label="선교 현황">
+        <div class="figure"><b data-count="total">0</b><span>선교사</span></div>
+        <div class="figure sent"><b data-count="sent">0</b><span>파송</span></div>
+        <div class="figure partner"><b data-count="partner">0</b><span>협력</span></div>
+        <div class="figure"><b data-count="fields">0</b><span>선교지</span></div>
+      </div>
+      <button class="replay" id="replay" type="button">
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M12 7a5 5 0 1 1-1.5-3.6M12 1.5V4H9.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        다시 보기
+      </button>
     </div>
   </section>
 
-  <div class="stats" aria-label="선교 현황">
-    <div class="stat"><b data-count="total">0</b><span>선교사</span></div>
-    <div class="stat sent"><b data-count="sent">0</b><span>파송</span></div>
-    <div class="stat partner"><b data-count="partner">0</b><span>협력</span></div>
-    <div class="stat"><b data-count="fields">0</b><span>선교지</span></div>
-  </div>
-
-  <section class="block" id="missionaries">
-    <div class="block-head">
+  <section class="roster" id="missionaries">
+    <div class="roster-head">
       <div>
+        <p class="kicker">MISSIONARIES</p>
         <h2>우리가 함께하는 선교사님</h2>
-        <p>카드를 누르면 지도에서 해당 선교지를 보여드립니다.</p>
+        <p>선교지를 누르면 지도에서 인천과 이어진 길을 보여드립니다.</p>
       </div>
       <div class="filters" role="group" aria-label="선교사 구분">
-        <button type="button" data-filter="all" aria-pressed="true">전체</button>
-        <button type="button" data-filter="sent" aria-pressed="false">파송</button>
-        <button type="button" data-filter="partner" aria-pressed="false">협력</button>
+        <button type="button" id="filter-all" data-filter="all" aria-pressed="true">전체</button>
+        <button type="button" id="filter-sent" data-filter="sent" aria-pressed="false"><i class="pip sent"></i>파송</button>
+        <button type="button" id="filter-partner" data-filter="partner" aria-pressed="false"><i class="pip partner"></i>협력</button>
       </div>
     </div>
-    <div class="grid" id="cards"></div>
+    <div id="regions"></div>
   </section>
 
   <section class="prayer" id="prayer">
     <blockquote>
-      “그러므로 너희는 가서 모든 민족을 제자로 삼아<br />아버지와 아들과 성령의 이름으로 세례를 베풀고”
+      “그러므로 너희는 가서<br /><strong>모든 민족을 제자로 삼아</strong>”
       <cite>마태복음 28:19</cite>
     </blockquote>
-    <a class="cta" href="#missionaries">선교사님을 위해 기도하기</a>
+    <a class="cta" href="#missionaries">선교사님을 위해 기도하기 <span aria-hidden="true">→</span></a>
   </section>
 </main>
 
-<footer>© 인천제2교회 선교위원회</footer>
+<footer>
+  <span><b>인천제2교회</b> 선교위원회</span>
+  <span>열방을 향한 기도와 동역에 감사드립니다.</span>
+</footer>
 
 <script src="vendor/d3.min.js"></script>
 <script src="vendor/topojson-client.min.js"></script>
@@ -349,24 +403,24 @@
 /* =====================================================================
    선교 데이터 — 선교사 추가/변경은 이 부분만 수정하면 됩니다.
    type: "sent"(파송) | "partner"(협력)
-   보안 지역(C국·H국 등)은 FIELDS에 넣지 말고 SECURE에만 기록합니다.
+   보안 지역(C국·H국 등)은 FIELDS에 넣지 말고 MISSIONARIES에 secure: true로만 기록합니다.
    ===================================================================== */
 const HOME = { name: "인천제2교회", coords: [126.70, 37.45] };
 
-// iso: world-atlas 국가 코드(ISO 3166 숫자), coords: [경도, 위도], label: 지도 라벨 위치 보정
+// iso: world-atlas 국가 코드(ISO 3166 숫자), coords: [경도, 위도], label: 지도 라벨 위치 보정 [x, y, 정렬]
 const FIELDS = [
-  { id: "brazil",      name: "브라질",     iso: "076", coords: [-47.88, -15.79], label: [-10, 4, "end"] },
-  { id: "spain",       name: "스페인",     iso: "724", coords: [-3.70, 40.42],   label: [-10, 4, "end"] },
-  { id: "tanzania",    name: "탄자니아",   iso: "834", coords: [35.74, -6.16],   label: [10, 4, "start"] },
-  { id: "southafrica", name: "남아공",     iso: "710", coords: [28.19, -25.75],  label: [10, 4, "start"] },
-  { id: "nepal",       name: "네팔",       iso: "524", coords: [85.32, 27.72],   label: [-10, 4, "end"] },
-  { id: "mongolia",    name: "몽골",       iso: "496", coords: [106.91, 47.89],  label: [0, -12, "middle"] },
-  { id: "vietnam",     name: "베트남",     iso: "704", coords: [105.85, 21.03],  label: [-10, 0, "end"] },
-  { id: "cambodia",    name: "캄보디아",   iso: "116", coords: [104.92, 11.56],  label: [-10, 4, "end"] },
-  { id: "malaysia",    name: "말레이시아", iso: "458", coords: [101.69, 3.14],   label: [-10, 4, "end"] },
-  { id: "singapore",   name: "싱가폴",     iso: "702", coords: [103.82, 1.35],   label: [10, 6, "start"] },
-  { id: "indonesia",   name: "인도네시아", iso: "360", coords: [106.85, -6.21],  label: [-10, 10, "end"] },
-  { id: "philippines", name: "필리핀",     iso: "608", coords: [120.98, 14.60],  label: [10, 4, "start"] },
+  { id: "brazil",      name: "브라질",     region: "남아메리카", iso: "076", coords: [-47.88, -15.79], label: [-10, 4, "end"] },
+  { id: "spain",       name: "스페인",     region: "유럽",       iso: "724", coords: [-3.70, 40.42],   label: [-10, 4, "end"] },
+  { id: "tanzania",    name: "탄자니아",   region: "아프리카",   iso: "834", coords: [35.74, -6.16],   label: [10, 4, "start"] },
+  { id: "southafrica", name: "남아공",     region: "아프리카",   iso: "710", coords: [28.19, -25.75],  label: [10, 4, "start"] },
+  { id: "nepal",       name: "네팔",       region: "아시아",     iso: "524", coords: [85.32, 27.72],   label: [-10, 4, "end"] },
+  { id: "mongolia",    name: "몽골",       region: "아시아",     iso: "496", coords: [106.91, 47.89],  label: [0, -12, "middle"] },
+  { id: "vietnam",     name: "베트남",     region: "아시아",     iso: "704", coords: [105.85, 21.03],  label: [-10, 0, "end"] },
+  { id: "cambodia",    name: "캄보디아",   region: "아시아",     iso: "116", coords: [104.92, 11.56],  label: [-10, 4, "end"] },
+  { id: "malaysia",    name: "말레이시아", region: "아시아",     iso: "458", coords: [101.69, 3.14],   label: [-10, 4, "end"] },
+  { id: "singapore",   name: "싱가폴",     region: "아시아",     iso: "702", coords: [103.82, 1.35],   label: [10, 6, "start"] },
+  { id: "indonesia",   name: "인도네시아", region: "아시아",     iso: "360", coords: [106.85, -6.21],  label: [-10, 10, "end"] },
+  { id: "philippines", name: "필리핀",     region: "아시아",     iso: "608", coords: [120.98, 14.60],  label: [10, 4, "start"] },
 ];
 
 const MISSIONARIES = [
@@ -398,10 +452,14 @@ const MISSIONARIES = [
 // 보안 지역 선교사 이름을 공개 페이지에서 가릴지 여부 (김찬양 → 김○양)
 const MASK_SECURE_NAMES = true;
 
+// 명부에 보여줄 지역 순서
+const REGION_ORDER = ["아시아", "아프리카", "유럽", "남아메리카"];
+
 /* ===================================================================== */
 
 const TYPE_LABEL = { sent: "파송", partner: "협력" };
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 
 const displayName = (m) => {
   if (!(m.secure && MASK_SECURE_NAMES)) return m.name;
@@ -410,92 +468,151 @@ const displayName = (m) => {
   return chars[0] + "○".repeat(chars.length - 2) + chars[chars.length - 1];
 };
 
-const fieldById = new Map(FIELDS.map((f) => [f.id, f]));
 const byField = d3.group(MISSIONARIES.filter((m) => !m.secure), (m) => m.field);
 const secureByField = d3.group(MISSIONARIES.filter((m) => m.secure), (m) => m.field);
+const fieldsOnMap = FIELDS.filter((f) => byField.has(f.id));
+const hasSent = (f) => byField.get(f.id).some((m) => m.type === "sent");
 
-// 아크 = (선교지, 구분) 쌍. 파송 먼저, 각 그룹은 거리 순으로 출발
+// 노선 = (선교지, 구분) 쌍. 파송 먼저, 각 그룹은 가까운 곳부터
 const routes = [];
 for (const type of ["sent", "partner"]) {
-  const list = FIELDS.filter((f) => (byField.get(f.id) || []).some((m) => m.type === type))
+  routes.push(...fieldsOnMap
+    .filter((f) => byField.get(f.id).some((m) => m.type === type))
     .map((f) => ({ field: f, type, dist: d3.geoDistance(HOME.coords, f.coords) }))
-    .sort((a, b) => a.dist - b.dist);
-  routes.push(...list);
+    .sort((a, b) => a.dist - b.dist));
 }
 
-/* ───────── Map ───────── */
+/* ───────── Projection ───────── */
 const W = 1000, H = 520;
-const svg = d3.select("#world").attr("viewBox", `0 0 ${W} ${H}`);
 const projection = d3.geoNaturalEarth1().rotate([-35, 0]);
-projection.fitExtent([[10, 10], [W - 10, H + 60]], { type: "Sphere" }); // 남극 쪽은 살짝 잘라 화면을 넓게 씀
-const path = d3.geoPath(projection);
-
-const defs = svg.append("defs");
-defs.append("filter").attr("id", "blur").append("feGaussianBlur").attr("stdDeviation", 2.5);
-const glow = defs.append("filter").attr("id", "glow").attr("x", "-200%").attr("y", "-200%").attr("width", "500%").attr("height", "500%");
-glow.append("feGaussianBlur").attr("stdDeviation", 3).attr("result", "b");
-const merge = glow.append("feMerge");
-merge.append("feMergeNode").attr("in", "b");
-merge.append("feMergeNode").attr("in", "SourceGraphic");
-
-// 지도가 인천에서 퍼져나가듯 펼쳐지는 마스크 (부드러운 가장자리)
+projection.fitExtent([[10, 6], [W - 10, H + 70]], { type: "Sphere" }); // 남극 쪽은 잘라 지도를 넓게
 const homeXY = projection(HOME.coords);
-const grad = defs.append("radialGradient").attr("id", "revealGrad");
-grad.append("stop").attr("offset", "0%").attr("stop-color", "#fff");
-grad.append("stop").attr("offset", "78%").attr("stop-color", "#fff");
-grad.append("stop").attr("offset", "100%").attr("stop-color", "#fff").attr("stop-opacity", 0);
-const revealCircle = defs.append("mask").attr("id", "reveal")
-  .append("circle").attr("cx", homeXY[0]).attr("cy", homeXY[1]).attr("r", 0).attr("fill", "url(#revealGrad)");
-const maxR = d3.max([[0, 0], [W, 0], [0, H], [W, H]], (p) => Math.hypot(p[0] - homeXY[0], p[1] - homeXY[1])) * 1.3;
-
-const base = svg.append("g").attr("mask", "url(#reveal)");
-base.append("path").datum({ type: "Sphere" }).attr("class", "sphere").attr("d", path);
-base.append("path").datum(d3.geoGraticule10()).attr("class", "graticule").attr("d", path);
-
 const countries = topojson.feature(WORLD_TOPOLOGY, WORLD_TOPOLOGY.objects.countries).features
   .filter((f) => f.id !== "010"); // 남극 제외
-const missionIso = new Set(FIELDS.filter((f) => byField.has(f.id)).map((f) => f.iso));
-const countryPaths = base.append("g").selectAll("path").data(countries).join("path")
-  .attr("class", (d) => "country" + (d.id === "410" ? " is-home" : ""))
-  .attr("d", path);
+
+/* ───────── 점묘 세계지도 (canvas) ─────────
+   나라마다 고유한 색으로 오프스크린에 그린 뒤 격자 위치의 픽셀을 읽어
+   "어느 나라의 점인지"를 알아낸다. */
+const SPACING = 5.4;
+const dots = (() => {
+  const off = document.createElement("canvas");
+  off.width = W; off.height = H;
+  const octx = off.getContext("2d", { willReadFrequently: true });
+  const opath = d3.geoPath(projection, octx);
+  countries.forEach((c, i) => {
+    octx.fillStyle = `rgb(${(i + 1) & 255},${((i + 1) >> 8) & 255},7)`;
+    octx.beginPath(); opath(c); octx.fill();
+  });
+  const data = octx.getImageData(0, 0, W, H).data;
+  const list = [];
+  for (let row = 0, y = SPACING / 2; y < H; row++, y += SPACING * 0.88) {
+    for (let x = (row % 2 ? SPACING / 2 : 0) + 2; x < W; x += SPACING) {
+      const p = (Math.round(y) * W + Math.round(x)) * 4;
+      if (data[p + 3] < 200) continue;
+      const exact = data[p + 2] === 7;
+      const idx = exact ? data[p] + (data[p + 1] << 8) - 1 : -1;
+      const iso = idx >= 0 && countries[idx] ? countries[idx].id : null;
+      const d = Math.hypot(x - homeXY[0], y - homeXY[1]);
+      list.push({ x, y, iso, d, jitter: Math.random() * 140 });
+    }
+  }
+  return list;
+})();
+
+const dotCanvas = document.getElementById("dots");
+const dctx = dotCanvas.getContext("2d");
+const C = { dot: css("--dot"), gold: css("--gold"), blue: css("--blue"), rose: css("--rose") };
+const isoTone = new Map(fieldsOnMap.map((f) => [f.iso, hasSent(f) ? C.gold : C.blue]));
+const litAt = new Map(); // iso → 빛이 닿은 시각(ms)
+let revealStart = 0, revealSpeed = 0.42; // px/ms
+let rafId = 0;
+
+function sizeDots() {
+  const r = dotCanvas.getBoundingClientRect();
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  dotCanvas.width = Math.round(r.width * dpr);
+  dotCanvas.height = Math.round(r.height * dpr);
+  dctx.setTransform((r.width * dpr) / W, 0, 0, (r.height * dpr) / H, 0, 0);
+}
+
+function drawDots(now) {
+  dctx.clearRect(0, 0, W, H);
+  const t = now - revealStart;
+  let busy = false;
+  for (const p of dots) {
+    const local = t - (p.d / revealSpeed + p.jitter);
+    if (local <= 0) { busy = true; continue; }
+    let a = Math.min(1, local / 500);
+    if (a < 1) busy = true;
+    let color = C.dot, r = 1.25;
+    if (p.iso === "410") { color = C.rose; r = 1.6; }
+    else if (litAt.has(p.iso)) {
+      const k = Math.min(1, (now - litAt.get(p.iso)) / 700);
+      if (k < 1) busy = true;
+      color = d3.interpolateRgb(C.dot, isoTone.get(p.iso))(k * 0.85);
+      r = 1.25 + 0.35 * k;
+    }
+    // 인천 근처는 밝게 번지는 첫 순간 강조
+    if (a < 1) { dctx.globalAlpha = a; r += (1 - a) * 1.2; } else dctx.globalAlpha = 1;
+    dctx.fillStyle = color;
+    dctx.beginPath(); dctx.arc(p.x, p.y, r, 0, Math.PI * 2); dctx.fill();
+  }
+  dctx.globalAlpha = 1;
+  return busy;
+}
+
+function loop(now) {
+  const busy = drawDots(now);
+  rafId = busy || flying > 0 ? requestAnimationFrame(loop) : 0;
+}
+const kick = () => { if (!rafId) rafId = requestAnimationFrame(loop); };
+
+/* ───────── SVG layer ───────── */
+const svg = d3.select("#world");
+const defs = svg.append("defs");
+const glow = defs.append("filter").attr("id", "glow").attr("x", "-50%").attr("y", "-50%").attr("width", "200%").attr("height", "200%");
+glow.append("feGaussianBlur").attr("stdDeviation", 2.2).attr("result", "b");
+const fm = glow.append("feMerge");
+fm.append("feMergeNode").attr("in", "b");
+fm.append("feMergeNode").attr("in", "SourceGraphic");
+const hg = defs.append("radialGradient").attr("id", "homeGlow");
+hg.append("stop").attr("offset", "0%").attr("stop-color", C.rose).attr("stop-opacity", .7);
+hg.append("stop").attr("offset", "100%").attr("stop-color", C.rose).attr("stop-opacity", 0);
 
 const shock = svg.append("circle").attr("class", "shock").attr("cx", homeXY[0]).attr("cy", homeXY[1]).attr("r", 0).attr("opacity", 0);
 const arcLayer = svg.append("g");
 const markerLayer = svg.append("g");
 const homeLayer = svg.append("g");
 
-// 화면상 곡선(2차 베지어) — 항상 위로 휘도록, 같은 나라 두 번째 노선은 더 높게
-function arcPath(route, sameFieldIndex) {
-  const [x0, y0] = homeXY;
-  const [x1, y1] = projection(route.field.coords);
+// 화면상 곡선(2차 베지어). 항상 위로 휘고, 같은 나라 두 번째 노선은 더 높게
+const seen = new Map();
+routes.forEach((r, i) => {
+  const n = seen.get(r.field.id) || 0;
+  seen.set(r.field.id, n + 1);
+  const [x0, y0] = homeXY, [x1, y1] = projection(r.field.coords);
   const dx = x1 - x0, dy = y1 - y0, d = Math.hypot(dx, dy);
   let nx = -dy / d, ny = dx / d;
   if (ny > 0) { nx = -nx; ny = -ny; }
-  const bend = d * (0.22 + sameFieldIndex * 0.1);
-  const cx = (x0 + x1) / 2 + nx * bend, cy = (y0 + y1) / 2 + ny * bend;
-  return `M${x0},${y0} Q${cx},${cy} ${x1},${y1}`;
-}
-
-const seen = new Map();
-routes.forEach((r) => {
-  const i = seen.get(r.field.id) || 0;
-  seen.set(r.field.id, i + 1);
-  r.d = arcPath(r, i);
+  const bend = d * (0.22 + n * 0.1);
+  r.d = `M${x0},${y0} Q${(x0 + x1) / 2 + nx * bend},${(y0 + y1) / 2 + ny * bend} ${x1},${y1}`;
+  r.gid = `g${i}`;
+  // 인천 쪽은 옅고 선교지 쪽으로 갈수록 밝아지는 그라디언트
+  const g = defs.append("linearGradient").attr("id", r.gid).attr("gradientUnits", "userSpaceOnUse")
+    .attr("x1", x0).attr("y1", y0).attr("x2", x1).attr("y2", y1);
+  const col = r.type === "sent" ? C.gold : C.blue;
+  g.append("stop").attr("offset", "0%").attr("stop-color", col).attr("stop-opacity", .25);
+  g.append("stop").attr("offset", "100%").attr("stop-color", col).attr("stop-opacity", 1);
 });
 
-const glows = arcLayer.selectAll(".arc-glow").data(routes).join("path")
-  .attr("class", (r) => `arc-glow ${r.type}`).attr("d", (r) => r.d);
-const arcs = arcLayer.selectAll(".arc").data(routes).join("path")
-  .attr("class", (r) => `arc ${r.type}`).attr("d", (r) => r.d);
+const groups = arcLayer.selectAll(".route-group").data(routes).join("g").attr("class", "route-group");
+const arcs = groups.append("path").attr("class", (r) => `arc ${r.type}`).attr("d", (r) => r.d).attr("stroke", (r) => `url(#${r.gid})`);
+const trails = groups.append("path").attr("class", (r) => `trail ${r.type}`).attr("d", (r) => r.d);
 arcs.each(function (r) { r.len = this.getTotalLength(); });
 
-// 마커: 선교지별 1개 (파송이 있으면 금색)
-const fieldsOnMap = FIELDS.filter((f) => byField.has(f.id));
 const markers = markerLayer.selectAll(".marker").data(fieldsOnMap).join("g")
-  .attr("class", (f) => "marker " + (byField.get(f.id).some((m) => m.type === "sent") ? "sent" : "partner"))
+  .attr("class", (f) => "marker " + (hasSent(f) ? "sent" : "partner"))
   .attr("transform", (f) => `translate(${projection(f.coords)})`)
-  .attr("tabindex", 0)
-  .attr("role", "button")
+  .attr("tabindex", 0).attr("role", "button")
   .attr("aria-label", (f) => `${f.name}: ${byField.get(f.id).map((m) => m.name).join(", ")} 선교사`);
 markers.append("circle").attr("class", "ring").attr("r", 3);
 markers.append("circle").attr("class", "dot").attr("r", 0);
@@ -505,127 +622,109 @@ const labels = markers.append("text").attr("class", "label")
 labels.append("tspan").text((f) => f.name);
 labels.append("tspan").attr("class", "count").attr("dx", 3).text((f) => byField.get(f.id).length);
 
-// 인천 (출발점)
 const home = homeLayer.append("g").attr("class", "home").attr("transform", `translate(${homeXY})`).attr("opacity", 0);
+home.append("circle").attr("class", "glow").attr("r", 22);
 home.append("circle").attr("class", "halo").attr("r", 4);
-home.append("circle").attr("class", "core").attr("r", 4.5);
-home.append("text").attr("class", "home-label").attr("x", 10).attr("y", -8).text(HOME.name);
+home.append("circle").attr("class", "core").attr("r", 3.2);
+home.append("text").attr("class", "home-label").attr("x", 11).attr("y", -6).text(HOME.name);
+home.append("text").attr("class", "home-sub").attr("x", 11).attr("y", 8).text("INCHEON");
 
-/* ───────── Secure list ───────── */
-const secureList = d3.select("#secureList");
-for (const [field, list] of secureByField) {
-  secureList.append("li").html(`<b>${field}</b><span>${list.length}가정</span>`);
-}
-
-/* ───────── Animation timeline ───────── */
-let runId = 0;
+/* ───────── Timeline ───────── */
+let runId = 0, flying = 0;
 function play() {
   const id = ++runId;
   const T = reduceMotion ? 0 : 1;
   svg.selectAll("*").interrupt();
   d3.select("#secureCard").classed("show", false);
-  markers.classed("live", false);
-  countryPaths.classed("is-mission", false);
-
-  // 1) 인천에서 지도가 펼쳐짐
-  revealCircle.attr("r", 0).transition().duration(2200 * T).ease(d3.easeCubicInOut).attr("r", maxR);
-  shock.attr("r", 0).attr("opacity", .8)
-    .transition().duration(2000 * T).ease(d3.easeCubicOut).attr("r", maxR * 0.7).attr("opacity", 0);
-  home.attr("opacity", 0).transition().delay(300 * T).duration(600 * T).attr("opacity", 1);
-
-  // 2) 노선이 순서대로 뻗어나감
-  arcs.attr("stroke-dasharray", (r) => `${r.len} ${r.len}`).attr("stroke-dashoffset", (r) => r.len).attr("opacity", 1);
-  glows.style("opacity", 0);
-  markers.select(".dot").attr("r", 0);
+  markers.classed("live", false).select(".dot").attr("r", 0);
   labels.style("opacity", 0);
-  arcLayer.selectAll(".comet").remove();
+  litAt.clear();
+  flying = 0;
 
-  const start = 1500, gap = 260, fly = 1300;
+  // 1) 인천에서 점들이 번지며 지도가 펼쳐짐
+  revealStart = performance.now() - (T ? 0 : 1e6);
+  revealSpeed = 0.42;
+  kick();
+  shock.attr("r", 0).attr("opacity", .9)
+    .transition().duration(2600 * T).ease(d3.easeCubicOut).attr("r", 900).attr("opacity", 0);
+  home.attr("opacity", 0).transition().duration(700 * T).attr("opacity", 1);
+
+  // 2) 빛의 노선이 차례로 뻗어나감
+  arcs.attr("stroke-dasharray", (r) => `${r.len} ${r.len}`).attr("stroke-dashoffset", (r) => r.len);
+  trails.attr("stroke-dasharray", (r) => `0 ${r.len}`).attr("opacity", 0);
+
+  const start = 1700, gap = 240, fly = 1400;
   routes.forEach((r, i) => {
     const delay = (start + i * gap) * T;
-    const node = arcs.filter((d) => d === r);
-    node.transition().delay(delay).duration(fly * T).ease(d3.easeCubicInOut).attr("stroke-dashoffset", 0)
-      .on("end", () => {
-        if (id !== runId) return;
-        land(r);
-      });
-
-    if (T) {
-      const el = node.node();
-      const comet = arcLayer.append("circle").attr("class", `comet ${r.type}`).attr("r", 2.8).attr("opacity", 0);
-      comet.transition().delay(delay).duration(fly).ease(d3.easeCubicInOut)
-        .attr("opacity", 1)
-        .attrTween("transform", () => (t) => {
-          const p = el.getPointAtLength(t * r.len);
-          return `translate(${p.x},${p.y})`;
-        })
-        .transition().duration(300).attr("r", 7).attr("opacity", 0).remove();
-    }
+    flying++;
+    arcs.filter((d) => d === r).transition().delay(delay).duration(fly * T).ease(d3.easeCubicInOut)
+      .attr("stroke-dashoffset", 0)
+      .on("end interrupt", () => { flying--; });
+    arcs.filter((d) => d === r).transition("land").delay(delay + fly * T).duration(0)
+      .on("end", () => { if (id === runId) land(r); });
+    if (T) runTrail(r, delay, fly, d3.easeCubicInOut);
   });
 
-  const total = (start + routes.length * gap + fly) * T;
   d3.timeout(() => {
     if (id !== runId) return;
     d3.select("#secureCard").classed("show", true);
-    startFlow();
-  }, total + 200);
+    ambient(id);
+  }, (start + routes.length * gap + fly + 300) * T);
+}
+
+// 노선 앞머리의 빛 꼬리 (짧은 대시가 길을 따라 이동)
+function runTrail(r, delay, duration, ease, peak = 1) {
+  const seg = Math.min(46, r.len * 0.35);
+  trails.filter((d) => d === r)
+    .attr("stroke-dasharray", `${seg} ${r.len + seg}`).attr("stroke-dashoffset", seg).attr("opacity", 0)
+    .transition().delay(delay).duration(duration).ease(ease)
+    .attr("stroke-dashoffset", -r.len)
+    .attrTween("opacity", () => (t) => String(peak * Math.min(1, t * 6, (1 - t) * 6)));
 }
 
 function land(r) {
-  glows.filter((d) => d === r).transition().duration(reduceMotion ? 0 : 700).style("opacity", 0.18);
   const m = markers.filter((f) => f === r.field);
-  m.select(".dot").transition().duration(500).ease(d3.easeBackOut.overshoot(3)).attr("r", 4);
-  m.select(".label").transition().duration(500).style("opacity", 1);
+  m.select(".dot").transition().duration(600).ease(d3.easeBackOut.overshoot(3)).attr("r", r.type === "sent" || hasSent(r.field) ? 4.2 : 3.4);
+  m.select(".label").transition().duration(600).style("opacity", 1);
   m.classed("live", true);
-  countryPaths.filter((c) => c.id === r.field.iso).classed("is-mission", true);
+  if (!litAt.has(r.field.iso)) litAt.set(r.field.iso, performance.now());
+  kick();
 }
 
-// 3) 이후 노선 위로 빛이 천천히 흐르는 효과 (반복)
-function startFlow() {
+// 3) 이후: 노선 위로 천천히 빛이 오감
+function ambient(id) {
   if (reduceMotion) return;
-  const id = runId;
   arcs.attr("stroke-dasharray", null).attr("stroke-dashoffset", null);
-  const pulse = () => {
+  const tick = () => {
     if (id !== runId) return;
     const r = routes[Math.floor(Math.random() * routes.length)];
-    const el = arcs.filter((d) => d === r).node();
-    arcLayer.append("circle").attr("class", `comet ${r.type}`).attr("r", 2).attr("opacity", 0)
-      .transition().duration(2400).ease(d3.easeSinInOut)
-      .attr("opacity", 0.9)
-      .attrTween("transform", () => (t) => {
-        const p = el.getPointAtLength(t * r.len);
-        return `translate(${p.x},${p.y})`;
-      })
-      .transition().duration(250).attr("opacity", 0).remove();
-    d3.timeout(pulse, 700);
+    runTrail(r, 0, 2600 + r.len * 2, d3.easeSinInOut, 0.75);
+    d3.timeout(tick, 900);
   };
-  pulse();
+  tick();
 }
 
 /* ───────── Interaction ───────── */
 const tooltip = d3.select("#tooltip");
 const wrap = document.querySelector(".map-wrap");
+const stage = document.querySelector(".map-stage");
 
 function focusField(f) {
-  arcs.classed("dim", (r) => r.field !== f).classed("hot", (r) => r.field === f);
-  glows.classed("dim", (r) => r.field !== f);
+  groups.classed("dim", (r) => r.field !== f).classed("hot", (r) => r.field === f);
   const [x, y] = projection(f.coords);
-  const box = document.getElementById("world").getBoundingClientRect();
-  const wbox = wrap.getBoundingClientRect();
-  const k = box.width / W;
+  const s = stage.getBoundingClientRect(), w = wrap.getBoundingClientRect();
+  const k = s.width / W;
   const items = byField.get(f.id)
-    .map((m) => `<li><span class="tag ${m.type}">${TYPE_LABEL[m.type]}</span>${m.name} 선교사</li>`).join("");
-  tooltip.html(`<h4>${f.name}</h4><ul>${items}</ul>`)
-    .style("left", `${box.left - wbox.left + x * k}px`)
-    .style("top", `${box.top - wbox.top + y * k}px`)
+    .map((m) => `<li><i class="pip ${m.type}"></i>${m.name} 선교사 <small style="opacity:.6">${TYPE_LABEL[m.type]}</small></li>`).join("");
+  tooltip.html(`<h3>${f.name}</h3><ul>${items}</ul>`)
+    .style("left", `${Math.min(Math.max(s.left - w.left + x * k, 100), w.width - 100)}px`)
+    .style("top", `${s.top - w.top + y * k}px`)
     .classed("show", true);
 }
 function clearFocus() {
-  arcs.classed("dim", false).classed("hot", false);
-  glows.classed("dim", false);
+  groups.classed("dim", false).classed("hot", false);
   tooltip.classed("show", false);
 }
-
 markers
   .on("mouseenter focus", (e, f) => focusField(f))
   .on("mouseleave blur", clearFocus)
@@ -633,52 +732,87 @@ markers
 svg.on("click", clearFocus);
 document.getElementById("replay").addEventListener("click", () => { clearFocus(); play(); });
 
-/* ───────── Cards ───────── */
-const cards = d3.select("#cards");
-const cardData = [
-  ...fieldsOnMap.map((f) => ({ field: f, title: f.name, list: byField.get(f.id) })),
-  ...[...secureByField].map(([name, list]) => ({ title: name, list, secure: true })),
-];
-const card = cards.selectAll(".card").data(cardData).join("article")
-  .attr("class", (d) => "card" + (d.secure ? " secure" : ""))
-  .attr("tabindex", (d) => (d.secure ? null : 0));
-card.append("h3").html((d) => `${d.title} <small>${d.list.length}명</small>`);
-card.append("ul").selectAll("li").data((d) => d.list).join("li")
-  .html((m) => `<span>${displayName(m)} 선교사</span><span class="tag ${m.type}">${TYPE_LABEL[m.type]}</span>`);
+/* ───────── 보안 지역 ───────── */
+const secureList = d3.select("#secureList");
+for (const [field, list] of secureByField) {
+  secureList.append("li").html(`<b>${field}</b><span>${list.length}명</span>`);
+}
 
-card.filter((d) => !d.secure).on("click keydown", (e, d) => {
-  if (e.type === "keydown" && e.key !== "Enter") return;
+/* ───────── 지역별 명부 ───────── */
+const regionData = [
+  ...REGION_ORDER.map((name) => ({ name, fields: fieldsOnMap.filter((f) => f.region === name) }))
+    .filter((r) => r.fields.length)
+    .map((r) => ({ ...r, items: r.fields.map((f) => ({ field: f, title: f.name, list: byField.get(f.id) })) })),
+  { name: "보안 지역", secure: true, items: [...secureByField].map(([title, list]) => ({ title, list, secure: true })) },
+];
+const regions = d3.select("#regions").selectAll(".region").data(regionData).join("div").attr("class", "region");
+const rn = regions.append("div").attr("class", "region-name");
+rn.append("h3").text((d) => d.name);
+rn.append("span").text((d) => `${d3.sum(d.items, (i) => i.list.length)}명 · ${d.items.length}곳`);
+const fieldEls = regions.append("div").attr("class", "fields")
+  .selectAll(".field").data((d) => d.items).join((enter) => enter.append((d) => document.createElement(d.secure ? "div" : "button")))
+  .attr("class", (d) => "field" + (d.secure ? " secure" : ""))
+  .attr("type", (d) => (d.secure ? null : "button"));
+const fieldTop = fieldEls.append("div").attr("class", "field-top");
+fieldTop.append("strong").text((d) => d.title);
+fieldTop.append("small").text((d) => (d.secure ? "위치 비공개" : `${d.list.length}명`));
+fieldEls.append("ul").selectAll("li").data((d) => d.list).join("li")
+  .attr("class", (m) => m.type)
+  .html((m) => `<i class="pip ${m.type}"></i>${displayName(m)} <em>${TYPE_LABEL[m.type]}</em>`);
+regions.filter((d) => d.secure).append("p").attr("class", "secure-note")
+  .text("선교사님과 현지 동역자들의 안전을 위해 사역 국가와 이름 일부를 공개하지 않습니다.");
+
+fieldEls.filter((d) => !d.secure).on("click", (e, d) => {
   document.getElementById("map").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
-  setTimeout(() => focusField(d.field), reduceMotion ? 0 : 600);
+  setTimeout(() => focusField(d.field), reduceMotion ? 0 : 650);
 });
 
 document.querySelectorAll(".filters button").forEach((btn) => {
   btn.addEventListener("click", () => {
     const type = btn.dataset.filter;
+    const show = (m) => type === "all" || m.type === type;
     document.querySelectorAll(".filters button").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
-    card.attr("hidden", (d) => (type === "all" || d.list.some((m) => m.type === type) ? null : ""));
-    card.selectAll("li").style("display", (m) => (type === "all" || m.type === type ? null : "none"));
+    fieldEls.property("hidden", (d) => !d.list.some(show));
+    fieldEls.selectAll("li").property("hidden", (m) => !show(m));
+    regions.property("hidden", (d) => !d.items.some((i) => i.list.some(show)));
   });
 });
 
-/* ───────── Stats count-up ───────── */
+/* ───────── 현황 숫자 ───────── */
 const counts = {
   total: MISSIONARIES.length,
   sent: MISSIONARIES.filter((m) => m.type === "sent").length,
   partner: MISSIONARIES.filter((m) => m.type === "partner").length,
   fields: fieldsOnMap.length + secureByField.size,
 };
-const statObserver = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (!entry.isIntersecting) return;
-    const el = entry.target, to = counts[el.dataset.count];
-    d3.select(el).transition().duration(reduceMotion ? 0 : 1400).ease(d3.easeCubicOut)
-      .tween("text", () => { const i = d3.interpolateRound(0, to); return (t) => { el.textContent = i(t); }; });
-    statObserver.unobserve(el);
-  });
-}, { threshold: 0.4 });
-document.querySelectorAll("[data-count]").forEach((el) => statObserver.observe(el));
+document.querySelectorAll("[data-count]").forEach((el, i) => {
+  const to = counts[el.dataset.count];
+  if (reduceMotion) { el.textContent = to; return; }
+  d3.select(el).transition().delay(600 + i * 120).duration(1600).ease(d3.easeCubicOut)
+    .tween("text", () => { const f = d3.interpolateRound(0, to); return (t) => { el.textContent = f(t); }; });
+});
 
+/* ───────── 별 ───────── */
+function drawStars() {
+  const c = document.getElementById("stars"), r = c.getBoundingClientRect();
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  c.width = r.width * dpr; c.height = r.height * dpr;
+  const ctx = c.getContext("2d");
+  ctx.scale(dpr, dpr);
+  const rand = d3.randomLcg(31);
+  const n = Math.round((r.width * r.height) / 5200);
+  for (let i = 0; i < n; i++) {
+    const y = rand() * r.height * 0.75;
+    ctx.globalAlpha = (0.15 + rand() * 0.6) * (1 - y / (r.height * 0.75));
+    ctx.fillStyle = "#fff";
+    ctx.beginPath(); ctx.arc(rand() * r.width, y, rand() * 1.1 + 0.2, 0, Math.PI * 2); ctx.fill();
+  }
+}
+
+/* ───────── Boot ───────── */
+sizeDots();
+drawStars();
+new ResizeObserver(() => { sizeDots(); drawStars(); drawDots(performance.now()); }).observe(stage);
 play();
 </script>
 </body>
