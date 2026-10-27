@@ -481,7 +481,7 @@ const TONGDOK = (() => {
     ctx.textBaseline = 'alphabetic';
     ctx.textAlign = 'left';
 
-    drawFP(ctx, geom, { ...FP, ridge: T.ridge, hot: T.hot });
+    drawFP(ctx, geom, { ...FP, ridge: T.ridge, hot: T.hot, upto: opt.upto });
 
     // 머리
     ctx.fillStyle = T.ink;
@@ -845,7 +845,7 @@ const TONGDOK = (() => {
     ctx.setLineDash([3, 7]);
     ctx.beginPath(); ctx.arc(0, 0, 256, 0, Math.PI * 2); ctx.stroke();
     ctx.setLineDash([]);
-    drawFP(ctx, geom, { cx: 0, cy: 0, R: 230, ridge: PI, hot: PI, aRidge: 0.62, aHot: 1 });
+    drawFP(ctx, geom, { cx: 0, cy: 0, R: 230, ridge: PI, hot: PI, aRidge: 0.62, aHot: 1, upto: opt.upto });
     ctx.restore();
     ctx.fillStyle = PI;
     font(ctx, 700, 12, F.mono);
@@ -929,12 +929,15 @@ const TONGDOK = (() => {
     setTimeout(() => URL.revokeObjectURL(a.href), 4000);
   }
 
-  async function savePNG(kind, st, bleed, name) {
+  async function makePNG(kind, st, bleed) {
     const { canvas } = renderHiRes(kind, st, bleed);
     const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
     canvas.width = canvas.height = 0;
     if (!blob) throw new Error('PNG를 만들지 못했습니다. 메모리가 부족할 수 있습니다 (데스크톱 브라우저 권장).');
-    download(setPngDpi(new Uint8Array(await blob.arrayBuffer()), 300), name);
+    return setPngDpi(new Uint8Array(await blob.arrayBuffer()), 300);
+  }
+  async function savePNG(kind, st, bleed, name) {
+    download(await makePNG(kind, st, bleed), name);
   }
 
   let jspdfP = null;
@@ -949,14 +952,17 @@ const TONGDOK = (() => {
     });
     return jspdfP;
   }
-  async function savePDF(kind, st, bleed, name) {
+  async function makePDF(kind, st, bleed) {
     const { jsPDF } = await loadJsPDF();
     const { canvas, mmW, mmH } = renderHiRes(kind, st, bleed);
     const jpg = canvas.toDataURL('image/jpeg', 0.95);
     canvas.width = canvas.height = 0;
     const pdf = new jsPDF({ orientation: mmW > mmH ? 'landscape' : 'portrait', unit: 'mm', format: [mmW, mmH], compress: true });
     pdf.addImage(jpg, 'JPEG', 0, 0, mmW, mmH, undefined, 'NONE');
-    pdf.save(name);
+    return pdf.output('blob');
+  }
+  async function savePDF(kind, st, bleed, name) {
+    download(await makePDF(kind, st, bleed), name);
   }
 
   /* ── 페이지 사이 공유 파라미터 ────────────────── */
@@ -979,7 +985,7 @@ const TONGDOK = (() => {
   return {
     TOTAL, POSTER, CERT, SLOTS, THEMES, DEFAULT,
     normalize, generateRecord, makeShape, buildGeom, compute, drawFP,
-    renderPoster, renderCert, qrMatrix, ensureFonts, savePNG, savePDF, setPngDpi, renderHiRes,
+    renderPoster, renderCert, qrMatrix, ensureFonts, savePNG, savePDF, makePNG, makePDF, download, setPngDpi, renderHiRes,
     toQuery, fromQuery, fmtDate, isoDate, rngFrom,
   };
 })();
