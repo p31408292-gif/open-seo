@@ -1,0 +1,1084 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>완독 증명서 생성기</title>
+<meta name="description" content="TONGDOK® 완독지문 — 포스터와 같은 지문이 찍히는 A4 가로 완독 증명서 생성기. 지문 ID 해시와 확인용 QR 포함.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Gothic+A1:wght@400;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#0f0f0f; --cream:#efe9dc; --orange:#ff4d12; --lime:#d4ff3a;
+  --goth:"Gothic A1","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --anton:Anton,"Gothic A1",Impact,sans-serif;
+  --mono:"Space Mono","Gothic A1",ui-monospace,monospace;
+  --gut:clamp(16px,3.4vw,56px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--cream);color:var(--black);font-family:var(--goth);word-break:keep-all;overflow-x:hidden;overflow-x:clip}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+::selection{background:var(--lime)}
+.mono{font-family:var(--mono);font-size:13px;line-height:1.5}
+
+.top{background:var(--black);color:var(--cream);padding:18px var(--gut);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.top b{font:900 18px var(--goth);letter-spacing:-.02em}
+.top a{font-family:var(--mono);font-size:13px;text-decoration:none;border-bottom:2px solid var(--lime)}
+.head{padding:clamp(40px,6vw,90px) var(--gut) clamp(28px,4vw,56px);display:grid;grid-template-columns:1fr auto;align-items:end;gap:24px;border-bottom:8px solid var(--black)}
+.head h1{font:900 clamp(56px,11vw,210px)/.86 var(--goth);letter-spacing:-.065em}
+.head h1 span{color:var(--orange)}
+.head p{max-width:22em;text-align:right}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,380px);gap:clamp(28px,4vw,64px);padding:clamp(32px,4vw,64px) var(--gut) 90px;align-items:start}
+.sheet{position:sticky;top:20px}
+.frame{border:3px solid var(--black);box-shadow:16px 16px 0 var(--black);background:var(--black);transform:rotate(-.6deg)}
+.frame canvas{display:block;width:100%;height:auto;aspect-ratio:1697/1200}
+.meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:30px}
+.fpid{background:var(--black);color:var(--lime);padding:3px 8px}
+
+.field{display:block;margin-bottom:22px}
+.lab{display:flex;justify-content:space-between;gap:12px;font:800 13px var(--goth);margin-bottom:2px}
+.lab small{font:400 11px var(--mono);opacity:.65}
+.field input[type=text],.field input[type=date]{width:100%;min-width:0;border:0;border-bottom:4px solid var(--black);border-radius:0;background:transparent;color:var(--black);font:900 30px/1.15 var(--goth);letter-spacing:-.04em;padding:2px 0 6px;-webkit-appearance:none;appearance:none}
+.field input[type=date]{font:700 19px var(--mono);letter-spacing:0}
+.field input:focus{outline:none;border-bottom-color:var(--orange)}
+.field input::placeholder{color:rgba(15,15,15,.28)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);border:3px solid var(--black)}
+.seg button{background:transparent;border:0;border-right:3px solid var(--black);padding:10px 2px;font:900 16px var(--goth)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed=true]{background:var(--black);color:var(--lime)}
+.rng{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}
+.rng output{font:400 40px/1 var(--anton);min-width:2.6ch;text-align:right}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:30px;background:transparent}
+input[type=range]::-webkit-slider-runnable-track{height:7px;background:var(--black)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-10px;background:var(--orange);border:3px solid var(--black)}
+input[type=range]::-moz-range-track{height:7px;background:var(--black)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:0;background:var(--orange);border:3px solid var(--black)}
+input[type=range]:focus-visible{outline:3px dashed var(--orange);outline-offset:4px}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.chip{border:3px solid var(--black);background:var(--c0);height:66px;position:relative;padding:0;transition:transform .12s,box-shadow .12s}
+.chip i{position:absolute;right:7px;top:7px;width:18px;height:18px;background:var(--c1);border:2px solid var(--black)}
+.chip span{position:absolute;left:6px;bottom:4px;font:700 10px var(--mono);color:var(--t)}
+.chip[aria-pressed=true]{transform:translate(-3px,-3px);box-shadow:6px 6px 0 var(--black)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font:900 16px/1 var(--goth);padding:16px 18px;border:3px solid var(--black);background:var(--lime);color:var(--black);box-shadow:6px 6px 0 var(--black);text-decoration:none;transition:transform .12s,box-shadow .12s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--black)}
+.btn:active{transform:translate(6px,6px);box-shadow:0 0 0 var(--black)}
+.btn.dark{background:var(--black);color:var(--lime)}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+.actions .wide{grid-column:1/-1}
+.status{margin-top:16px;min-height:1.5em}
+.hint{margin-top:26px;border-top:3px solid var(--black);padding-top:16px}
+
+@media (max-width:900px){
+  .grid{grid-template-columns:1fr}
+  .sheet{position:relative;top:0}
+  .frame{box-shadow:9px 9px 0 var(--black)}
+  .head{grid-template-columns:1fr}
+  .head p{text-align:left}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="top"><b>TONGDOK® 완독지문</b><a href="완독지문-포스터-제안서.html" id="back">← 포스터 제안서 · 생성기</a></div>
+
+<header class="head">
+  <h1>완독<br><span>증명서.</span></h1>
+  <p class="mono">A4 가로 297×210mm · 300dpi. 포스터와 같은 입력이면 같은 지문이 도장처럼 찍힙니다. 지문 ID는 날짜별 장 수 배열의 해시라 기록이 한 장만 달라도 바뀝니다.</p>
+</header>
+
+<main class="grid">
+  <div class="sheet">
+    <div class="frame"><canvas id="cert" role="img" aria-label="완독 증명서 미리보기"></canvas></div>
+    <div class="meta mono"><span>CERTIFICATE · A4 LANDSCAPE · 1 OF 1</span><span>지문 ID <span class="fpid" id="fpId">—</span></span></div>
+  </div>
+
+  <form id="form" autocomplete="off" onsubmit="return false">
+    <label class="field"><span class="lab">이름</span><input type="text" id="f-name" maxlength="24" placeholder="이름"></label>
+    <div class="row2">
+      <label class="field"><span class="lab">시작일</span><input type="date" id="f-start"></label>
+      <label class="field"><span class="lab">완독일 <small>발급일</small></span><input type="date" id="f-end"></label>
+    </div>
+    <div class="row2">
+      <label class="field"><span class="lab">완독 번호</span><input type="text" id="f-no" inputmode="numeric" maxlength="4" placeholder="0047"></label>
+      <label class="field"><span class="lab">교회명 <small>서명란 생성</small></span><input type="text" id="f-church" maxlength="24" placeholder="선택"></label>
+    </div>
+    <div class="field"><span class="lab">주로 읽은 시간대</span><div class="seg" id="f-slot" role="group" aria-label="주로 읽은 시간대"></div></div>
+    <div class="field"><span class="lab">꾸준함 <small>읽은 날 비율</small></span><div class="rng"><input type="range" id="f-c" min="45" max="100" aria-label="꾸준함"><output id="o-c">82%</output></div></div>
+    <div class="field"><span class="lab">컬러</span><div class="chips" id="f-theme" role="group" aria-label="컬러"></div></div>
+    <div class="actions">
+      <button type="button" class="btn" id="png">PNG 300dpi</button>
+      <button type="button" class="btn" id="pdf">PDF (A4)</button>
+      <a class="btn dark wide" id="toPoster" href="완독지문-포스터-제안서.html#make">이 기록으로 포스터 →</a>
+    </div>
+    <p class="status mono" id="status" role="status"></p>
+    <p class="hint mono">하단 한 줄 문구는 포스터 전용입니다. 증명서의 QR은 확인 주소 예시(tongdok.app/v/번호-xxxx)를 담고, 완독 번호와 지문 ID만 공개하는 것을 전제로 합니다.</p>
+  </form>
+</main>
+
+<script>
+/* ─────────────────────────────────────────────────────────────
+   TONGDOK® 완독지문 — 공용 코어 (포스터·증명서가 같은 코드를 씁니다)
+   기록 생성 → 지문 기하 → 렌더 → 300dpi 내보내기
+   ───────────────────────────────────────────────────────────── */
+const TONGDOK = (() => {
+  'use strict';
+  const TOTAL = 1189;
+  const DAY = 86400000;
+  const POSTER = { w: 1200, h: 1697, mmW: 420, mmH: 594 };
+  const CERT = { w: 1697, h: 1200, mmW: 297, mmH: 210 };
+  const JSPDF_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+
+  const SLOTS = {
+    dawn: { label: '새벽', center: 5, range: '04–06시' },
+    morning: { label: '아침', center: 7, range: '06–09시' },
+    lunch: { label: '점심', center: 12, range: '11–13시' },
+    night: { label: '밤', center: 22, range: '21–24시' },
+  };
+
+  const THEMES = {
+    CREAM: { bg: '#efe9dc', ink: '#0f0f0f', sub: 'rgba(15,15,15,.6)', ridge: '#0f0f0f', hot: '#ff4d12', accent: '#ff4d12', panel: '#ff4d12', panelInk: '#0f0f0f', sw: ['#efe9dc', '#0f0f0f', '#ff4d12'] },
+    ACID: { bg: '#0f0f0f', ink: '#d4ff3a', sub: 'rgba(239,233,220,.62)', ridge: '#efe9dc', hot: '#d4ff3a', accent: '#d4ff3a', panel: '#d4ff3a', panelInk: '#0f0f0f', sw: ['#0f0f0f', '#d4ff3a'] },
+    BLAZE: { bg: '#ff4d12', ink: '#0f0f0f', sub: 'rgba(15,15,15,.66)', ridge: '#0f0f0f', hot: '#efe9dc', accent: '#efe9dc', panel: '#efe9dc', panelInk: '#0f0f0f', sw: ['#ff4d12', '#0f0f0f', '#efe9dc'] },
+    CHURCH: { bg: '#1d2536', ink: '#c6ad82', sub: 'rgba(239,233,220,.6)', ridge: '#e8e1d2', hot: '#c6ad82', accent: '#c6ad82', panel: '#c6ad82', panelInk: '#1d2536', sw: ['#1d2536', '#c6ad82'] },
+  };
+
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+  /* ── 결정적 의사난수 ───────────────────────────── */
+  function xmur3(str) {
+    let h = 1779033703 ^ str.length;
+    for (let i = 0; i < str.length; i++) {
+      h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+      h = (h << 13) | (h >>> 19);
+    }
+    return () => {
+      h = Math.imul(h ^ (h >>> 16), 2246822507);
+      h = Math.imul(h ^ (h >>> 13), 3266489909);
+      return (h ^= h >>> 16) >>> 0;
+    };
+  }
+  function mulberry32(a) {
+    return () => {
+      a |= 0; a = (a + 0x6d2b79f5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  const rngFrom = (str) => mulberry32(xmur3(str)());
+  function gauss(r) {
+    let u = 0;
+    while (u === 0) u = r();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * r());
+  }
+
+  /* ── 날짜 (UTC로만 계산해 서머타임 영향 없음) ─── */
+  function parseDate(s) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || '');
+    return m ? Date.UTC(+m[1], +m[2] - 1, +m[3]) : null;
+  }
+  function fmtDate(t, sep = '.') {
+    const d = new Date(t);
+    return d.getUTCFullYear() + sep + String(d.getUTCMonth() + 1).padStart(2, '0') + sep + String(d.getUTCDate()).padStart(2, '0');
+  }
+  const isoDate = (t) => fmtDate(t, '-');
+
+  /* ── 입력 정리 ───────────────────────────────── */
+  function normalize(inp) {
+    const name = String(inp.name || '').trim().slice(0, 24) || '이름';
+    const digits = String(inp.no || '').replace(/\D/g, '').slice(-4);
+    const no = (digits || '1').padStart(4, '0');
+    let s = parseDate(inp.start);
+    let e = parseDate(inp.end);
+    if (s == null) s = Date.UTC(2025, 0, 1);
+    if (e == null) e = s + 364 * DAY;
+    if (e < s) [s, e] = [e, s];
+    let days = Math.round((e - s) / DAY) + 1;
+    if (days < 40) { days = 40; e = s + 39 * DAY; }
+    if (days > 1460) { days = 1460; e = s + 1459 * DAY; }
+    return {
+      name, no, start: s, end: e, days,
+      slot: SLOTS[inp.slot] ? inp.slot : 'dawn',
+      consistency: clamp(Math.round(+inp.consistency || 80), 45, 100),
+      quote: String(inp.quote || '').trim().slice(0, 60),
+      church: String(inp.church || '').trim().slice(0, 24),
+      theme: THEMES[inp.theme] ? inp.theme : 'CREAM',
+    };
+  }
+
+  /* ── 날짜별 기록 생성: 합계 정확히 1,189장 ───── */
+  function generateRecord(n) {
+    const r = rngFrom(['REC', n.name, n.no, n.start, n.end, n.slot, n.consistency].join('|'));
+    const N = n.days;
+    const read = new Array(N).fill(true);
+    const target = clamp(Math.round((N * n.consistency) / 100), 2, Math.min(N, TOTAL));
+    let off = N - target;
+
+    // 가끔 찾아오는 8~38일짜리 긴 공백
+    if (off >= 8) {
+      let budget = Math.floor(off * (0.35 + r() * 0.35));
+      for (let t = 0; t < 300 && budget >= 8; t++) {
+        const len = Math.min(budget, 8 + Math.floor(r() * 31));
+        const room = N - len - 4;
+        if (room < 2) break;
+        const s = 2 + Math.floor(r() * room);
+        let ok = true;
+        for (let i = s - 3; i < s + len + 3; i++) if (i >= 0 && i < N && !read[i]) { ok = false; break; }
+        if (!ok) continue;
+        for (let i = s; i < s + len; i++) read[i] = false;
+        budget -= len;
+        off -= len;
+      }
+    }
+    // 나머지는 하루이틀씩 흩어진 쉼 (첫날·마지막 날은 항상 읽은 날)
+    for (let t = 0; t < N * 40 && off > 0; t++) {
+      const i = 1 + Math.floor(r() * (N - 2));
+      if (!read[i]) continue;
+      const len = r() < 0.28 ? 2 + Math.floor(r() * 2) : 1;
+      for (let k = 0; k < len && off > 0 && i + k < N - 1; k++) if (read[i + k]) { read[i + k] = false; off--; }
+    }
+
+    // 장 수 분배: 읽은 날마다 최소 1장 + 나머지를 가중치로 최대잉여법 배분
+    const idx = [];
+    for (let i = 0; i < N; i++) if (read[i]) idx.push(i);
+    const R = idx.length;
+    const extra = TOTAL - R;
+    const dow0 = new Date(n.start).getUTCDay();
+    const w = idx.map((i) => {
+      let v = Math.exp(0.55 * gauss(r));
+      if (r() < 0.07) v *= 2.4 + r() * 2.6; // 몰아 읽은 날
+      if ((dow0 + i) % 7 === 0) v *= 1.35; // 주일
+      return v;
+    });
+    const W = w.reduce((a, b) => a + b, 0);
+    const exact = w.map((v) => (v / W) * extra);
+    const base = exact.map(Math.floor);
+    const rem = extra - base.reduce((a, b) => a + b, 0);
+    exact.map((v, k) => [v - base[k], k]).sort((a, b) => b[0] - a[0] || a[1] - b[1])
+      .slice(0, rem).forEach(([, k]) => base[k]++);
+
+    const center = SLOTS[n.slot].center;
+    const days = new Array(N);
+    let k = 0;
+    for (let i = 0; i < N; i++) {
+      if (!read[i]) { days[i] = { read: false, ch: 0, hour: null }; continue; }
+      let h = r() < 0.72 ? Math.round(center + gauss(r) * 0.9) : 6 + Math.floor(r() * 18);
+      h = ((h % 24) + 24) % 24;
+      days[i] = { read: true, ch: 1 + base[k++], hour: h };
+    }
+
+    // 통계
+    let streak = 0, best = 0, maxCh = 0, hot = 0;
+    const hc = new Array(24).fill(0);
+    for (const d of days) {
+      if (d.read) {
+        best = Math.max(best, ++streak);
+        maxCh = Math.max(maxCh, d.ch);
+        if (d.ch >= 10) hot++;
+        hc[d.hour]++;
+      } else streak = 0;
+    }
+    const topHour = hc.indexOf(Math.max(...hc));
+
+    // 지문 ID: 날짜별 장 수 배열 해시 — 한 장만 달라도 바뀐다
+    const hf = xmur3('FP|' + isoDate(n.start) + '|' + days.map((d) => d.ch).join(','));
+    const hex = hf().toString(16).padStart(8, '0').toUpperCase();
+    const verify = hf().toString(16).padStart(8, '0').slice(0, 4);
+
+    return {
+      days, readDays: R, total: N, best, topHour, maxCh, hot,
+      sum: days.reduce((a, d) => a + d.ch, 0),
+      fp: 'FP-' + hex.slice(0, 4) + '-' + hex.slice(4),
+      verify,
+      url: 'tongdok.app/v/' + n.no + '-' + verify,
+    };
+  }
+
+  /* ── 지문 모양: 이름+번호로만 결정 ─────────────── */
+  function makeShape(n) {
+    const r = rngFrom('SHAPE|' + n.name + '|' + n.no);
+    const left = r() < 0.5;
+    const dAng = (left ? Math.PI * 0.72 : Math.PI * 0.28) + (r() - 0.5) * 0.45;
+    const dR = 0.56 + r() * 0.14;
+    return {
+      key: n.name + '|' + n.no,
+      rot: r() * Math.PI * 2,
+      dir: r() < 0.5 ? 1 : -1,
+      ex: 0.8 + r() * 0.07, // 세로로 살짝 긴 타원
+      ey: 1,
+      waves: [2, 3, 5].map((k) => ({ k, a: 0.016 + r() * 0.026, p: r() * Math.PI * 2, c: (r() * 2 - 1) * 2.6 })),
+      core: { x: (r() - 0.5) * 0.1, y: -(0.04 + r() * 0.07) },
+      dx: Math.cos(dAng) * dR * 0.82,
+      dy: Math.sin(dAng) * dR,
+      dA: 0.065 + r() * 0.035,
+      dS: 0.2 + r() * 0.06,
+      dRot: r() * Math.PI * 2,
+      tj: r(),
+    };
+  }
+
+  function warp(sh, r, phi) {
+    let m = 0;
+    for (const w of sh.waves) m += w.a * Math.sin(w.k * phi + w.p + w.c * r);
+    const rr = r * (1 + m * Math.min(1, r * 5));
+    let x = rr * Math.cos(phi) * sh.ex;
+    let y = rr * Math.sin(phi) * sh.ey;
+    const f = (1 - r) * (1 - r); // 안쪽 코어만 살짝 위로 밀어 루프 느낌
+    x += sh.core.x * f;
+    y += sh.core.y * f;
+    // 삼각주(델타): 한 점에서 결을 밀어내 세 갈래로 눌린 자리를 만든다
+    const dx = x - sh.dx, dy = y - sh.dy, d = Math.hypot(dx, dy) + 1e-6;
+    const amp = sh.dA * Math.exp(-(d * d) / (sh.dS * sh.dS)) * (1 + 0.4 * Math.cos(3 * Math.atan2(dy, dx) - sh.dRot));
+    return [x + (dx / d) * amp, y + (dy / d) * amp];
+  }
+
+  /* ── 기하: 하루 = 나선의 한 마디, 중심 = 첫날 ─── */
+  function buildGeom(rec, sh) {
+    const N = rec.days.length;
+    const T = clamp(14 + (N - 90) * 0.032 + (sh.tj - 0.5) * 2, 14, 46);
+    const r0 = 0.035, Th = 2 * Math.PI * T, b = (1 - r0) / Th, ring = (1 - r0) / T;
+    const S = r0 * Th + (b * Th * Th) / 2; // 아르키메데스 나선 전체 길이
+    const thetaAt = (s) => (-r0 + Math.sqrt(r0 * r0 + 2 * b * s)) / b;
+    // 마디 길이 ±40%: 끊긴 자리가 바큇살처럼 정렬되지 않게
+    const lr = rngFrom('LEN|' + sh.key + '|' + N);
+    const L = new Array(N);
+    let sum = 0;
+    for (let i = 0; i < N; i++) sum += L[i] = 1 + 0.4 * (2 * lr() - 1);
+    const segs = [];
+    const step = 0.0055;
+    let acc = 0;
+    for (let i = 0; i < N; i++) {
+      const s0 = (acc / sum) * S;
+      acc += L[i];
+      const s1 = (acc / sum) * S;
+      const d = rec.days[i];
+      if (!d.read) continue; // 쉰 날 = 끊김
+      const w = ring * (0.12 + 0.6 * Math.min(1, d.ch / 18));
+      const g = ring * 0.3 + w; // 마디 사이 틈 (둥근 끝 보정 포함)
+      let a = s0 + g / 2, e = s1 - g / 2;
+      if (e - a < ring * 0.12) { const mid = (s0 + s1) / 2; a = mid - ring * 0.06; e = mid + ring * 0.06; }
+      const n = Math.max(2, Math.ceil((e - a) / step) + 1);
+      const pts = new Float32Array(n * 2);
+      for (let k = 0; k < n; k++) {
+        const t = thetaAt(a + ((e - a) * k) / (n - 1));
+        const p = warp(sh, r0 + b * t, sh.rot + sh.dir * t);
+        pts[2 * k] = p[0];
+        pts[2 * k + 1] = p[1];
+      }
+      segs.push({ i, pts, w, hot: d.ch >= 10 });
+    }
+    return { segs, ring, T, N };
+  }
+
+  /* o: {cx, cy, R, ridge, hot, upto?, push?, aRidge?, aHot?} */
+  function drawFP(ctx, geom, o) {
+    const { cx, cy, R } = o;
+    const upto = o.upto == null ? Infinity : o.upto;
+    const P = o.push && o.push.a > 0.0005 ? o.push : null;
+    ctx.save();
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    for (const sg of geom.segs) {
+      if (sg.i >= upto) break;
+      const p = sg.pts;
+      let n = p.length / 2;
+      if (upto - sg.i < 1) n = Math.max(2, Math.floor(n * (upto - sg.i)));
+      ctx.beginPath();
+      for (let k = 0; k < n; k++) {
+        let x = p[2 * k], y = p[2 * k + 1];
+        if (P) {
+          const dx = x - P.x, dy = y - P.y, d2 = dx * dx + dy * dy;
+          const f = P.a * Math.exp(-d2 / (P.s * P.s)), d = Math.sqrt(d2) + 1e-6;
+          x += (dx / d) * f;
+          y += (dy / d) * f;
+        }
+        if (k) ctx.lineTo(cx + x * R, cy + y * R);
+        else ctx.moveTo(cx + x * R, cy + y * R);
+      }
+      ctx.lineWidth = sg.w * R;
+      ctx.strokeStyle = sg.hot ? o.hot : o.ridge;
+      ctx.globalAlpha = sg.hot ? (o.aHot ?? 1) : (o.aRidge ?? 1);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function compute(inp) {
+    const n = normalize(inp);
+    const rec = generateRecord(n);
+    const geom = buildGeom(rec, makeShape(n));
+    return { n, rec, geom };
+  }
+
+  /* ── 타이포 헬퍼 ─────────────────────────────── */
+  const F = {
+    goth: '"Gothic A1", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif',
+    anton: 'Anton, "Gothic A1", Impact, sans-serif',
+    mono: '"Space Mono", "Gothic A1", ui-monospace, monospace',
+  };
+  const font = (ctx, w, size, fam) => { ctx.font = `${w} ${size}px ${fam}`; };
+  function fit(ctx, text, w, size, fam, maxW) {
+    font(ctx, w, size, fam);
+    const m = ctx.measureText(text).width;
+    if (m > maxW) { size = Math.floor((size * maxW) / m); font(ctx, w, size, fam); }
+    return size;
+  }
+  const track = (ctx, px) => { if ('letterSpacing' in ctx) ctx.letterSpacing = px + 'px'; };
+
+  const STATIC_TEXT = '완독지문번호전용자읽은날최장연속주로시각하루최다장일시쉰이상중심첫바깥완독증명서성경권처음부터끝까지이사람은전체를었음을지문으로합니다발급기간확인담당목회서명인통독앱기록자동생되었습니다한만달라도바뀝니본미포함';
+  const loaded = new Set();
+  function ensureFonts(text) {
+    if (!document.fonts || !document.fonts.load) return Promise.resolve(false);
+    const missing = [...new Set(STATIC_TEXT + (text || '') + '0123456789')].filter((c) => !loaded.has(c)).join('');
+    if (!missing) return Promise.resolve(false);
+    [...missing].forEach((c) => loaded.add(c));
+    const specs = ['900 40px "Gothic A1"', '800 40px "Gothic A1"', '700 40px "Gothic A1"', '40px Anton', '400 40px "Space Mono"', '700 40px "Space Mono"'];
+    return Promise.all(specs.map((f) => document.fonts.load(f, missing).catch(() => []))).then(() => true);
+  }
+
+  function stamp(ctx, x, y, r, rot, color) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rot);
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = 7;
+    ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.stroke();
+    ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.arc(0, 0, r - 26, 0, Math.PI * 2); ctx.stroke();
+    const ring = 'TONGDOK · 1,189 CHAPTERS · COMPLETED · ';
+    font(ctx, 700, 13, F.mono);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const step = (Math.PI * 2) / ring.length;
+    for (let i = 0; i < ring.length; i++) {
+      ctx.save();
+      ctx.rotate(i * step);
+      ctx.fillText(ring[i], 0, -(r - 14));
+      ctx.restore();
+    }
+    font(ctx, 900, 38, F.goth);
+    ctx.fillText('완독자', 0, -18);
+    ctx.fillText('전용', 0, 26);
+    ctx.restore();
+  }
+
+  /* ── 포스터 (논리 1200×1697) ──────────────────── */
+  function renderPoster(ctx, st, opt = {}) {
+    const { n, rec, geom } = st;
+    const T = THEMES[n.theme];
+    const W = POSTER.w, H = POSTER.h, b = opt.bleed || 0, M = 60;
+    const FP = { cx: 792, cy: 866, R: 404 };
+    ctx.save();
+    ctx.fillStyle = T.bg;
+    ctx.fillRect(-b, -b, W + 2 * b, H + 2 * b); // 재단 여유까지 배경색
+    ctx.textBaseline = 'alphabetic';
+    ctx.textAlign = 'left';
+
+    drawFP(ctx, geom, { ...FP, ridge: T.ridge, hot: T.hot });
+
+    // 머리
+    ctx.fillStyle = T.ink;
+    font(ctx, 700, 17, F.mono);
+    ctx.fillText('TONGDOK® 완독지문', M, 70);
+    ctx.textAlign = 'right';
+    ctx.fillText(n.church ? n.church + ' · 1 OF 1' : '1 OF 1 · EDITION 01', W - M, 70);
+    ctx.textAlign = 'left';
+    ctx.fillRect(M, 86, W - 2 * M, 4);
+    font(ctx, 400, 18, F.mono);
+    ctx.fillText('완독 번호 — NO.', M, 132);
+
+    // 거대한 완독 번호
+    fit(ctx, n.no, 400, 372, F.anton, 690);
+    ctx.fillText(n.no, M - 8, 500);
+
+    stamp(ctx, 226, 712, 104, -0.24, T.accent);
+
+    // 왼쪽 기술 표기 칼럼
+    const col = [
+      ['FINGERPRINT ID', rec.fp],
+      ['RINGS', geom.T.toFixed(1)],
+      ['쉰 날 / GAPS', rec.total - rec.readDays + '일'],
+      ['10장+ 날', rec.hot + '일'],
+    ];
+    let y = 900;
+    for (const [k, v] of col) {
+      ctx.fillStyle = T.sub; font(ctx, 400, 14, F.mono); ctx.fillText(k, M, y);
+      ctx.fillStyle = T.ink; font(ctx, 700, 21, F.mono); ctx.fillText(v, M, y + 27);
+      y += 64;
+    }
+    // 날짜별 장 수 바코드
+    const bx = M, bw = 330, base = 1262, bh = 56;
+    ctx.fillStyle = T.sub; font(ctx, 400, 13, F.mono); ctx.fillText('DAILY CHAPTERS →', bx, base - bh - 10);
+    const cw = bw / rec.total;
+    rec.days.forEach((d, i) => {
+      if (!d.read) return;
+      const h = 4 + (d.ch / rec.maxCh) * (bh - 4);
+      ctx.fillStyle = d.ch >= 10 ? T.hot : T.ink;
+      ctx.fillRect(bx + i * cw, base - h, Math.max(0.8, cw * 0.72), h);
+    });
+
+    // 하단
+    ctx.fillStyle = T.ink;
+    ctx.fillRect(M, 1284, W - 2 * M, 8);
+    font(ctx, 400, 18, F.mono);
+    ctx.fillText(fmtDate(n.start) + ' → ' + fmtDate(n.end), M, 1322);
+    ctx.textAlign = 'right';
+    ctx.fillText(rec.total + '일 · 66권 · 1,189장', W - M, 1322);
+    ctx.textAlign = 'left';
+
+    track(ctx, -4);
+    fit(ctx, n.name, 900, 132, F.goth, W - 2 * M);
+    ctx.fillText(n.name, M - 4, 1452);
+    track(ctx, 0);
+
+    const stats = [
+      [rec.readDays + '/' + rec.total, '읽은 날 / 전체 기간'],
+      [rec.best + '일', '최장 연속'],
+      [String(rec.topHour).padStart(2, '0') + '시', '주로 읽은 시각'],
+      [rec.maxCh + '장', '하루 최다'],
+    ];
+    const cwid = (W - 2 * M) / 4;
+    stats.forEach(([v, k], i) => {
+      const x = M + i * cwid + (i ? 20 : 0);
+      if (i) { ctx.fillStyle = T.ink; ctx.fillRect(M + i * cwid, 1488, 3, 86); }
+      ctx.fillStyle = T.ink;
+      fit(ctx, v, 400, 62, F.anton, cwid - 30);
+      ctx.fillText(v, x, 1544);
+      ctx.fillStyle = T.sub;
+      font(ctx, 700, 17, F.goth);
+      ctx.fillText(k, x, 1572);
+    });
+
+    ctx.fillStyle = T.ink;
+    ctx.fillRect(M, 1592, W - 2 * M, 2);
+    fit(ctx, n.quote || '한 장씩, 끝까지.', 800, 27, F.goth, W - 2 * M);
+    ctx.fillText(n.quote || '한 장씩, 끝까지.', M, 1634);
+
+    // 범례
+    const ringPx = geom.ring * FP.R;
+    const ly = 1670;
+    let lx = M;
+    font(ctx, 400, 13, F.mono);
+    const seg = (w, c, gap) => {
+      ctx.save();
+      ctx.strokeStyle = c; ctx.lineWidth = w; ctx.lineCap = 'round';
+      ctx.beginPath();
+      if (gap) { ctx.moveTo(lx, ly - 5); ctx.lineTo(lx + 10, ly - 5); ctx.moveTo(lx + 22, ly - 5); ctx.lineTo(lx + 32, ly - 5); }
+      else { ctx.moveTo(lx, ly - 5); ctx.lineTo(lx + 32, ly - 5); }
+      ctx.stroke(); ctx.restore();
+      lx += 42;
+    };
+    const lab = (t) => { ctx.fillStyle = T.sub; ctx.fillText(t, lx, ly); lx += ctx.measureText(t).width + 24; };
+    seg(ringPx * 0.153, T.ink); lab('1장');
+    seg(ringPx * 0.72, T.ink); lab('18장+');
+    seg(ringPx * 0.5, T.hot); lab('10장 이상');
+    seg(ringPx * 0.3, T.ink, true); lab('쉰 날');
+    lab('중심=첫날 · 바깥=완독일');
+    ctx.textAlign = 'right';
+    ctx.fillText(rec.url, W - M, ly);
+    ctx.restore();
+  }
+
+  /* ── QR (바이트 모드, 오류정정 M, 버전 1–6) ──── */
+  const QR_M = [null, [10, 1, 16], [16, 1, 28], [26, 1, 44], [18, 2, 32], [24, 2, 43], [16, 4, 27]];
+  const QR_ALIGN = [null, [], [6, 18], [6, 22], [6, 26], [6, 30], [6, 34]];
+  function gfMul(x, y) {
+    let z = 0;
+    for (let i = 7; i >= 0; i--) { z = (z << 1) ^ ((z >>> 7) * 0x11d); z ^= ((y >>> i) & 1) * x; }
+    return z & 255;
+  }
+  function rsDivisor(deg) {
+    const res = new Array(deg).fill(0);
+    res[deg - 1] = 1;
+    let root = 1;
+    for (let i = 0; i < deg; i++) {
+      for (let j = 0; j < deg; j++) { res[j] = gfMul(res[j], root); if (j + 1 < deg) res[j] ^= res[j + 1]; }
+      root = gfMul(root, 2);
+    }
+    return res;
+  }
+  function rsRemainder(data, div) {
+    const res = div.map(() => 0);
+    for (const v of data) {
+      const f = v ^ res.shift();
+      res.push(0);
+      div.forEach((c, i) => { res[i] ^= gfMul(c, f); });
+    }
+    return res;
+  }
+  function qrMatrix(text) {
+    const bytes = [...new TextEncoder().encode(text)];
+    let ver = 1;
+    while (ver <= 6 && QR_M[ver][1] * QR_M[ver][2] < bytes.length + 2) ver++;
+    if (ver > 6) return null;
+    const [ecLen, blocks, dataPer] = QR_M[ver];
+    const cap = blocks * dataPer;
+    // 비트열
+    const bits = [];
+    const put = (v, n) => { for (let i = n - 1; i >= 0; i--) bits.push((v >>> i) & 1); };
+    put(4, 4); put(bytes.length, 8); bytes.forEach((v) => put(v, 8));
+    put(0, Math.min(4, cap * 8 - bits.length));
+    while (bits.length % 8) bits.push(0);
+    const data = [];
+    for (let i = 0; i < bits.length; i += 8) data.push(parseInt(bits.slice(i, i + 8).join(''), 2));
+    for (let p = 0; data.length < cap; p++) data.push(p % 2 ? 0x11 : 0xec);
+    // 블록 + RS + 인터리브
+    const div = rsDivisor(ecLen);
+    const dB = [], eB = [];
+    for (let k = 0; k < blocks; k++) { const d = data.slice(k * dataPer, (k + 1) * dataPer); dB.push(d); eB.push(rsRemainder(d, div)); }
+    const all = [];
+    for (let i = 0; i < dataPer; i++) dB.forEach((d) => all.push(d[i]));
+    for (let i = 0; i < ecLen; i++) eB.forEach((e) => all.push(e[i]));
+
+    const size = ver * 4 + 17;
+    const mod = Array.from({ length: size }, () => new Array(size).fill(false));
+    const fn = Array.from({ length: size }, () => new Array(size).fill(false));
+    const setF = (x, y, v) => { mod[y][x] = v; fn[y][x] = true; };
+    for (let i = 0; i < size; i++) { setF(6, i, i % 2 === 0); setF(i, 6, i % 2 === 0); }
+    const finder = (cx, cy) => {
+      for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) {
+        const x = cx + dx, y = cy + dy, dist = Math.max(Math.abs(dx), Math.abs(dy));
+        if (x >= 0 && x < size && y >= 0 && y < size) setF(x, y, dist !== 2 && dist !== 4);
+      }
+    };
+    finder(3, 3); finder(size - 4, 3); finder(3, size - 4);
+    const al = QR_ALIGN[ver];
+    al.forEach((ay, i) => al.forEach((ax, j) => {
+      if ((i === 0 && j === 0) || (i === 0 && j === al.length - 1) || (i === al.length - 1 && j === 0)) return;
+      for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) setF(ax + dx, ay + dy, Math.max(Math.abs(dx), Math.abs(dy)) !== 1);
+    }));
+    const drawFormat = (mask) => {
+      const d = (0 << 3) | mask; // M = 00
+      let rem = d;
+      for (let i = 0; i < 10; i++) rem = (rem << 1) ^ ((rem >>> 9) * 0x537);
+      const fb = ((d << 10) | rem) ^ 0x5412;
+      const g = (i) => ((fb >>> i) & 1) === 1;
+      for (let i = 0; i <= 5; i++) setF(8, i, g(i));
+      setF(8, 7, g(6)); setF(8, 8, g(7)); setF(7, 8, g(8));
+      for (let i = 9; i < 15; i++) setF(14 - i, 8, g(i));
+      for (let i = 0; i < 8; i++) setF(size - 1 - i, 8, g(i));
+      for (let i = 8; i < 15; i++) setF(8, size - 15 + i, g(i));
+      setF(8, size - 8, true);
+    };
+    drawFormat(0);
+    let bi = 0;
+    for (let right = size - 1; right >= 1; right -= 2) {
+      if (right === 6) right = 5;
+      for (let v = 0; v < size; v++) for (let j = 0; j < 2; j++) {
+        const x = right - j, up = ((right + 1) & 2) === 0, y = up ? size - 1 - v : v;
+        if (!fn[y][x] && bi < all.length * 8) { mod[y][x] = ((all[bi >>> 3] >>> (7 - (bi & 7))) & 1) === 1; bi++; }
+      }
+    }
+    const maskFn = [
+      (x, y) => (x + y) % 2 === 0, (x, y) => y % 2 === 0, (x) => x % 3 === 0, (x, y) => (x + y) % 3 === 0,
+      (x, y) => (Math.floor(x / 3) + Math.floor(y / 2)) % 2 === 0, (x, y) => ((x * y) % 2) + ((x * y) % 3) === 0,
+      (x, y) => (((x * y) % 2) + ((x * y) % 3)) % 2 === 0, (x, y) => (((x + y) % 2) + ((x * y) % 3)) % 2 === 0,
+    ];
+    const applyMask = (m) => { for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) if (!fn[y][x] && maskFn[m](x, y)) mod[y][x] = !mod[y][x]; };
+    const penalty = () => {
+      let p = 0, dark = 0;
+      for (let y = 0; y < size; y++) {
+        let rx = 1, ry = 1;
+        for (let x = 0; x < size; x++) {
+          if (mod[y][x]) dark++;
+          if (x) {
+            if (mod[y][x] === mod[y][x - 1]) { rx++; if (rx === 5) p += 3; else if (rx > 5) p++; } else rx = 1;
+            if (mod[x][y] === mod[x - 1][y]) { ry++; if (ry === 5) p += 3; else if (ry > 5) p++; } else ry = 1;
+          }
+          if (x && y && mod[y][x] === mod[y - 1][x] && mod[y][x] === mod[y][x - 1] && mod[y][x] === mod[y - 1][x - 1]) p += 3;
+        }
+      }
+      return p + Math.floor(Math.abs((dark * 20) / (size * size) - 10)) * 10;
+    };
+    let best = 0, bestP = Infinity;
+    for (let m = 0; m < 8; m++) {
+      applyMask(m); drawFormat(m);
+      const p = penalty();
+      if (p < bestP) { bestP = p; best = m; }
+      applyMask(m);
+    }
+    applyMask(best); drawFormat(best);
+    return { n: size, dark: (r, c) => mod[r][c] };
+  }
+  function drawQR(ctx, text, x, y, size, ink, bg) {
+    const m = qrMatrix(text);
+    ctx.fillStyle = bg;
+    ctx.fillRect(x, y, size, size);
+    if (!m) return;
+    const q = m.n + 8, cell = size / q;
+    ctx.fillStyle = ink;
+    for (let r = 0; r < m.n; r++) for (let c = 0; c < m.n; c++) {
+      if (m.dark(r, c)) ctx.fillRect(x + (c + 4) * cell, y + (r + 4) * cell, cell + 0.35, cell + 0.35);
+    }
+  }
+
+  /* ── 증명서 (논리 1697×1200, A4 가로) ─────────── */
+  function renderCert(ctx, st, opt = {}) {
+    const { n, rec, geom } = st;
+    const T = THEMES[n.theme];
+    const W = CERT.w, H = CERT.h, b = opt.bleed || 0, M = 72, PX = 1103, LR = 1040;
+    ctx.save();
+    ctx.fillStyle = T.bg;
+    ctx.fillRect(-b, -b, W + 2 * b, H + 2 * b);
+    ctx.fillStyle = T.panel;
+    ctx.fillRect(PX, -b, W - PX + b, H + 2 * b);
+    ctx.textBaseline = 'alphabetic';
+    ctx.textAlign = 'left';
+
+    // 왼쪽 65%
+    ctx.fillStyle = T.ink;
+    font(ctx, 700, 16, F.mono);
+    ctx.fillText('CERTIFICATE OF COMPLETION', M, 84);
+    ctx.textAlign = 'right';
+    ctx.fillText('TONGDOK® 완독지문', LR, 84);
+    ctx.textAlign = 'left';
+    font(ctx, 900, 26, F.goth);
+    ctx.fillText('완독 증명서', M, 122);
+    ctx.fillRect(M, 142, LR - M, 4);
+
+    track(ctx, -10);
+    font(ctx, 900, 268, F.goth);
+    ctx.fillText('완독', M - 10, 432);
+    const wd = ctx.measureText('완독').width;
+    track(ctx, 0);
+    const x2 = M + wd + 26;
+    const side = [['성경 66권', T.ink], ['1,189장', T.hot], ['처음부터 끝까지', T.ink]];
+    side.forEach(([t, c], i) => { ctx.fillStyle = c; fit(ctx, t, 900, 46, F.goth, LR - x2); ctx.fillText(t, x2, 278 + i * 58); });
+
+    ctx.fillStyle = T.ink;
+    ctx.fillRect(M, 470, LR - M, 10);
+    font(ctx, 700, 28, F.goth);
+    ctx.fillText('이 사람은', M, 542);
+    track(ctx, -3);
+    fit(ctx, n.name, 900, 112, F.goth, LR - M - 20);
+    const nw = ctx.measureText(n.name).width;
+    ctx.fillStyle = T.hot;
+    ctx.fillRect(M - 4, 668, nw + 18, 15);
+    ctx.fillStyle = T.ink;
+    ctx.fillText(n.name, M - 3, 658);
+    track(ctx, 0);
+    font(ctx, 800, 31, F.goth);
+    ctx.fillText('성경 전체를 끝까지 읽었음을', M, 744);
+    ctx.fillText('이 지문으로 증명합니다.', M, 788);
+
+    const stats = [
+      [rec.readDays + '/' + rec.total, '읽은 날 / 전체 기간'],
+      [rec.best + '일', '최장 연속'],
+      [String(rec.topHour).padStart(2, '0') + '시', '주로 읽은 시각'],
+      [rec.maxCh + '장', '하루 최다'],
+    ];
+    ctx.fillRect(M, 828, LR - M, 4);
+    const cw = (LR - M) / 4;
+    stats.forEach(([v, k], i) => {
+      const x = M + i * cw + (i ? 18 : 0);
+      ctx.fillStyle = T.ink;
+      if (i) ctx.fillRect(M + i * cw, 832, 3, 112);
+      fit(ctx, v, 400, 56, F.anton, cw - 28);
+      ctx.fillText(v, x, 900);
+      ctx.fillStyle = T.sub;
+      font(ctx, 700, 16, F.goth);
+      ctx.fillText(k, x, 930);
+    });
+    ctx.fillStyle = T.ink;
+    ctx.fillRect(M, 944, LR - M, 2);
+
+    const info = [
+      ['발급일 ISSUED', fmtDate(n.end)],
+      ['기간 PERIOD', fmtDate(n.start) + ' — ' + fmtDate(n.end) + ' (' + rec.total + '일)'],
+      ['완독 번호 NO.', n.no],
+      ['지문 ID', rec.fp],
+    ];
+    info.forEach(([k, v], i) => {
+      const yy = 994 + i * 30;
+      ctx.fillStyle = T.sub; font(ctx, 400, 14, F.mono); ctx.fillText(k, M, yy);
+      ctx.fillStyle = T.ink; font(ctx, 700, 16, F.mono); ctx.fillText(v, M + 160, yy);
+    });
+
+    const sx = 660;
+    if (n.church) {
+      ctx.fillStyle = T.ink;
+      fit(ctx, n.church + ' 확인', 800, 26, F.goth, LR - sx - 70);
+      ctx.fillText(n.church + ' 확인', sx, 1004);
+      ctx.fillRect(sx, 1080, LR - sx, 2);
+      ctx.fillStyle = T.sub;
+      font(ctx, 400, 13, F.mono);
+      ctx.fillText('담당 목회자 서명', sx, 1104);
+      ctx.textAlign = 'right';
+      ctx.fillText('(인)', LR, 1104);
+      ctx.textAlign = 'left';
+      ctx.strokeStyle = T.hot; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(LR - 34, 1040, 28, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = T.hot; ctx.textAlign = 'center'; font(ctx, 900, 15, F.goth); ctx.fillText('확인', LR - 34, 1046); ctx.textAlign = 'left';
+    } else {
+      ctx.fillStyle = T.sub; font(ctx, 400, 13, F.mono); ctx.fillText('ISSUED BY', sx, 1000);
+      ctx.fillStyle = T.ink; font(ctx, 900, 34, F.goth); ctx.fillText('TONGDOK®', sx, 1044);
+      ctx.fillStyle = T.sub; font(ctx, 400, 13, F.mono); ctx.fillText('통독 앱 완독 기록으로 자동 발급', sx, 1074);
+    }
+    ctx.fillStyle = T.sub;
+    fit(ctx, '이 지문은 날짜별 읽기 기록에서 생성되었습니다 · 기록이 한 장만 달라도 지문 ID가 바뀝니다 · 성경 본문 미포함', 400, 12, F.mono, LR - M);
+    ctx.fillText('이 지문은 날짜별 읽기 기록에서 생성되었습니다 · 기록이 한 장만 달라도 지문 ID가 바뀝니다 · 성경 본문 미포함', M, 1160);
+
+    // 오른쪽 35% 포인트 컬러 패널
+    const PI = T.panelInk;
+    ctx.fillStyle = PI;
+    font(ctx, 700, 16, F.mono);
+    ctx.fillText('NO.', PX + 44, 84);
+    ctx.textAlign = 'right';
+    ctx.fillText('1 OF 1', W - 44, 84);
+    ctx.textAlign = 'left';
+    fit(ctx, n.no, 400, 250, F.anton, W - PX - 80);
+    ctx.fillText(n.no, PX + 36, 330);
+
+    // 지문 도장
+    ctx.save();
+    ctx.translate(1400, 626);
+    ctx.rotate(-0.1);
+    ctx.strokeStyle = PI;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([3, 7]);
+    ctx.beginPath(); ctx.arc(0, 0, 256, 0, Math.PI * 2); ctx.stroke();
+    ctx.setLineDash([]);
+    drawFP(ctx, geom, { cx: 0, cy: 0, R: 230, ridge: PI, hot: PI, aRidge: 0.62, aHot: 1 });
+    ctx.restore();
+    ctx.fillStyle = PI;
+    font(ctx, 700, 12, F.mono);
+    ctx.textAlign = 'center';
+    ctx.fillText('FINGERPRINT · ' + rec.fp, 1400, 912);
+    ctx.textAlign = 'left';
+
+    const qx = PX + 44, qy = 950, qs = 168;
+    drawQR(ctx, 'https://' + rec.url, qx, qy, qs, PI, T.panel);
+    const tx = qx + qs + 22;
+    ctx.fillStyle = PI;
+    font(ctx, 700, 13, F.mono); ctx.fillText('VERIFY', tx, 984);
+    font(ctx, 400, 15, F.mono); ctx.fillText('tongdok.app/v/', tx, 1012);
+    fit(ctx, n.no + '-' + rec.verify, 700, 24, F.mono, W - tx - 40); ctx.fillText(n.no + '-' + rec.verify, tx, 1044);
+    font(ctx, 400, 12, F.mono); ctx.fillText('완독 번호 + 지문 ID만 공개', tx, 1076);
+    font(ctx, 700, 12, F.mono); ctx.fillText('SCAN TO VERIFY →', tx, 1110);
+    ctx.restore();
+  }
+
+  /* ── 300dpi 내보내기 ─────────────────────────── */
+  const CRC_T = (() => {
+    const t = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; }
+    return t;
+  })();
+  function crc32(u8, s, e) {
+    let c = 0xffffffff;
+    for (let i = s; i < e; i++) c = CRC_T[(c ^ u8[i]) & 255] ^ (c >>> 8);
+    return (c ^ 0xffffffff) >>> 0;
+  }
+  // IHDR 바로 뒤에 pHYs 청크를 직접 넣는다 (기존 pHYs는 버림)
+  function setPngDpi(u8, dpi) {
+    const ppm = Math.round(dpi / 0.0254);
+    const chunk = new Uint8Array(21);
+    const dv = new DataView(chunk.buffer);
+    dv.setUint32(0, 9);
+    chunk.set([0x70, 0x48, 0x59, 0x73], 4); // 'pHYs'
+    dv.setUint32(8, ppm);
+    dv.setUint32(12, ppm);
+    chunk[16] = 1; // 단위: 미터
+    dv.setUint32(17, crc32(chunk, 4, 17));
+    const view = new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
+    const parts = [u8.subarray(0, 8)];
+    let p = 8;
+    while (p < u8.length) {
+      const len = view.getUint32(p);
+      const type = String.fromCharCode(u8[p + 4], u8[p + 5], u8[p + 6], u8[p + 7]);
+      const end = p + 12 + len;
+      if (type !== 'pHYs') parts.push(u8.subarray(p, end));
+      if (type === 'IHDR') parts.push(chunk);
+      p = end;
+    }
+    return new Blob(parts, { type: 'image/png' });
+  }
+
+  // 렌더 함수 하나 + scale만 바꿔 고해상도
+  function renderHiRes(kind, st, bleed) {
+    const spec = kind === 'poster' ? POSTER : CERT;
+    const bleedMm = bleed ? 3 : 0;
+    const pxPerMm = 300 / 25.4;
+    const mmW = spec.mmW + 2 * bleedMm, mmH = spec.mmH + 2 * bleedMm;
+    const c = document.createElement('canvas');
+    c.width = Math.round(mmW * pxPerMm);
+    c.height = Math.round(mmH * pxPerMm);
+    const ctx = c.getContext('2d');
+    if (!ctx) throw new Error('이 브라우저에서는 큰 캔버스를 만들 수 없습니다.');
+    const scale = (spec.mmW * pxPerMm) / spec.w;
+    const off = bleedMm * pxPerMm;
+    ctx.setTransform(scale, 0, 0, scale, off, off);
+    (kind === 'poster' ? renderPoster : renderCert)(ctx, st, { bleed: off / scale });
+    return { canvas: c, mmW, mmH };
+  }
+
+  function download(blob, name) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }
+
+  async function savePNG(kind, st, bleed, name) {
+    const { canvas } = renderHiRes(kind, st, bleed);
+    const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
+    canvas.width = canvas.height = 0;
+    if (!blob) throw new Error('PNG를 만들지 못했습니다. 메모리가 부족할 수 있습니다 (데스크톱 브라우저 권장).');
+    download(setPngDpi(new Uint8Array(await blob.arrayBuffer()), 300), name);
+  }
+
+  let jspdfP = null;
+  function loadJsPDF() {
+    if (window.jspdf) return Promise.resolve(window.jspdf);
+    jspdfP = jspdfP || new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = JSPDF_URL;
+      s.onload = () => res(window.jspdf);
+      s.onerror = () => { jspdfP = null; rej(new Error('jsPDF를 불러오지 못했습니다. 네트워크를 확인하세요.')); };
+      document.head.appendChild(s);
+    });
+    return jspdfP;
+  }
+  async function savePDF(kind, st, bleed, name) {
+    const { jsPDF } = await loadJsPDF();
+    const { canvas, mmW, mmH } = renderHiRes(kind, st, bleed);
+    const jpg = canvas.toDataURL('image/jpeg', 0.95);
+    canvas.width = canvas.height = 0;
+    const pdf = new jsPDF({ orientation: mmW > mmH ? 'landscape' : 'portrait', unit: 'mm', format: [mmW, mmH], compress: true });
+    pdf.addImage(jpg, 'JPEG', 0, 0, mmW, mmH, undefined, 'NONE');
+    pdf.save(name);
+  }
+
+  /* ── 페이지 사이 공유 파라미터 ────────────────── */
+  const KEYS = { name: 'name', no: 'no', start: 'start', end: 'end', slot: 'slot', consistency: 'c', quote: 'quote', church: 'church', theme: 'theme' };
+  function toQuery(s) {
+    const q = new URLSearchParams();
+    for (const [k, p] of Object.entries(KEYS)) if (s[k] !== undefined && s[k] !== '') q.set(p, s[k]);
+    return q.toString();
+  }
+  function fromQuery(search, base) {
+    const q = new URLSearchParams(search);
+    const out = { ...base };
+    for (const [k, p] of Object.entries(KEYS)) if (q.has(p)) out[k] = q.get(p);
+    if (out.consistency !== undefined) out.consistency = +out.consistency;
+    return out;
+  }
+
+  const DEFAULT = { name: '김하늘', no: '0047', start: '2025-01-01', end: '2025-12-31', slot: 'dawn', consistency: 82, quote: '한 장씩, 끝까지.', church: '', theme: 'CREAM' };
+
+  return {
+    TOTAL, POSTER, CERT, SLOTS, THEMES, DEFAULT,
+    normalize, generateRecord, makeShape, buildGeom, compute, drawFP,
+    renderPoster, renderCert, qrMatrix, ensureFonts, savePNG, savePDF, setPngDpi, renderHiRes,
+    toQuery, fromQuery, fmtDate, isoDate, rngFrom,
+  };
+})();
+</script>
+<script>
+(() => {
+  'use strict';
+  const T = TONGDOK;
+  const $ = (s) => document.querySelector(s);
+  const state = T.fromQuery(location.search, { ...T.DEFAULT });
+  const el = {
+    name: $('#f-name'), start: $('#f-start'), end: $('#f-end'), no: $('#f-no'), church: $('#f-church'),
+    c: $('#f-c'), oc: $('#o-c'), slot: $('#f-slot'), theme: $('#f-theme'),
+  };
+  const cv = $('#cert'), ctx = cv.getContext('2d');
+  let cur = null;
+
+  for (const [k, s] of Object.entries(T.SLOTS)) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.dataset.v = k; b.textContent = s.label;
+    b.onclick = () => { state.slot = k; sync(); update(); };
+    el.slot.appendChild(b);
+  }
+  for (const [k, th] of Object.entries(T.THEMES)) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'chip'; b.dataset.v = k;
+    b.style.cssText = `--c0:${th.bg};--c1:${th.panel};--t:${th.ink}`;
+    b.innerHTML = '<i></i><span>' + k + '</span>';
+    b.setAttribute('aria-label', k + ' 컬러');
+    b.onclick = () => { state.theme = k; sync(); update(); };
+    el.theme.appendChild(b);
+  }
+  function sync() {
+    el.name.value = state.name; el.start.value = state.start; el.end.value = state.end; el.no.value = state.no;
+    el.church.value = state.church || ''; el.c.value = state.consistency; el.oc.textContent = state.consistency + '%';
+    [...el.slot.children].forEach((b) => b.setAttribute('aria-pressed', b.dataset.v === state.slot));
+    [...el.theme.children].forEach((b) => b.setAttribute('aria-pressed', b.dataset.v === state.theme));
+  }
+  const bind = (input, key, fn = (v) => v) => input.addEventListener('input', () => { state[key] = fn(input.value); if (key === 'consistency') el.oc.textContent = state.consistency + '%'; update(); });
+  bind(el.name, 'name'); bind(el.start, 'start'); bind(el.end, 'end'); bind(el.no, 'no', (v) => v.replace(/\D/g, ''));
+  bind(el.church, 'church'); bind(el.c, 'consistency', Number);
+
+  function size() {
+    const w = cv.getBoundingClientRect().width || 900, d = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = Math.round(w * d); cv.height = Math.round(w * d * (1200 / 1697));
+    render();
+  }
+  function render() {
+    if (!cur) return;
+    ctx.setTransform(cv.width / 1697, 0, 0, cv.width / 1697, 0, 0);
+    T.renderCert(ctx, cur);
+  }
+  let pending = 0;
+  function update() {
+    if (pending) return;
+    pending = requestAnimationFrame(() => {
+      pending = 0;
+      cur = T.compute(state);
+      render();
+      $('#fpId').textContent = cur.rec.fp;
+      const q = T.toQuery(state);
+      $('#toPoster').href = '완독지문-포스터-제안서.html?' + q + '#make';
+      $('#back').href = '완독지문-포스터-제안서.html?' + q;
+      history.replaceState(null, '', '?' + q);
+      T.ensureFonts(cur.n.name + cur.n.church).then((more) => more && render());
+    });
+  }
+
+  const status = $('#status');
+  async function exportAs(kind) {
+    const btns = [$('#png'), $('#pdf')];
+    btns.forEach((b) => (b.disabled = true));
+    status.textContent = '300dpi로 그리는 중… (297×210mm)';
+    await new Promise((r) => setTimeout(r, 30));
+    try {
+      await T.ensureFonts(cur.n.name + cur.n.church);
+      const name = `완독증명서_${cur.n.no}_${cur.n.name}_A4_300dpi`;
+      if (kind === 'png') await T.savePNG('cert', cur, false, name + '.png');
+      else await T.savePDF('cert', cur, false, name + '.pdf');
+      status.textContent = '완료 — ' + name + '.' + kind;
+    } catch (e) {
+      status.textContent = '실패: ' + e.message;
+    } finally {
+      btns.forEach((b) => (b.disabled = false));
+    }
+  }
+  $('#png').onclick = () => exportAs('png');
+  $('#pdf').onclick = () => exportAs('pdf');
+
+  sync();
+  cur = T.compute(state);
+  new ResizeObserver(size).observe(cv);
+  update();
+  T.ensureFonts(state.name + state.church).then(render);
+  if (document.fonts) {
+    document.fonts.ready.then(render);
+    document.fonts.addEventListener('loadingdone', render);
+  }
+})();
+</script>
+</body>
+</html>
